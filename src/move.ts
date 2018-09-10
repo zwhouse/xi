@@ -66,8 +66,8 @@ export class Move {
     */
     private static getSquare(rank: number, file: number, color: Color, state: Board): Square  {
 
-        const y = color == Color.Red ? 10 - rank : rank - 1;
-        const x = color == Color.Red ? 9 - file : file - 1;
+        const y = color === Color.Red ? 10 - rank : rank - 1;
+        const x = color === Color.Red ? 9 - file : file - 1;
 
         return state.getSquare(x, y);
     }

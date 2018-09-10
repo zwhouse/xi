@@ -59,6 +59,10 @@ export class Square {
         return squares;
     }
 
+    isColor(color: Color): boolean {
+        return this.getPiece().color === color;
+    }
+
     isOccupied(): boolean {
         return this.piece.color !== Color.None;
     }
@@ -103,7 +107,7 @@ export class Square {
     // 7      2    8
     // 8      1    9
     getFile(color: Color): number {
-        return color == Color.Red ? 9 - this.x : 1 + this.x;
+        return color === Color.Red ? 9 - this.x : 1 + this.x;
     }
 
     // index  red  black
@@ -118,7 +122,7 @@ export class Square {
     // 8      2    9
     // 9      1    10
     getRank(color: Color): number {
-        return color == Color.Red ? 10 - this.y : 1 + this.y;
+        return color === Color.Red ? 10 - this.y : 1 + this.y;
     }
 
     private getNextXY(...directions: Direction[]): number[] {

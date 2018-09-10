@@ -43,7 +43,7 @@ export class Board {
         if (from.getPiece().color !== this.getTurn())
             throw new Error(`it's not ${from.getPiece().color}'s turn`);
 
-        if (from.getPiece().color === to.getPiece().color)
+        if (from.isColor(to.getPiece().color))
             throw new Error("cannot capture own piece");
 
         const attacking = from.getPiece().getAttackingSquares(from);
@@ -75,7 +75,7 @@ export class Board {
             return true;
         }
 
-        const opponentColor = color === Color.Red ? Color.Black : Color.Red;
+        const opponentColor = Color.opposite(color);
         const ownGeneralSquare = this.findGeneral(color);
         const opponentSquares = [];
         let opponentAttackingSquares: Square[] = [];
@@ -170,7 +170,7 @@ export class Board {
 
         for (const row of this.grid) {
             for (const square of row) {
-                if (square.isOccupied() && square.getPiece().color === color && square.getPiece() instanceof General) {
+                if (square.isOccupied() && square.isColor(color) && square.getPiece() instanceof General) {
                     return square;
                 }
             }

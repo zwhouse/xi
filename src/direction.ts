@@ -17,9 +17,9 @@ export namespace Direction {
 
         switch (direction) {
             case Direction.Left:
-                return color == Color.Red ? -1 : 1;
+                return color === Color.Red ? -1 : 1;
             case Direction.Right:
-                return color == Color.Red ? 1 : -1;
+                return color === Color.Red ? 1 : -1;
             default:
                 // `Up` and `Down` don't change for `x`
                 return 0;
@@ -34,9 +34,9 @@ export namespace Direction {
 
         switch (direction) {
             case Direction.Up:
-                return color == Color.Red ? -1 : 1;
+                return color === Color.Red ? -1 : 1;
             case Direction.Down:
-                return color == Color.Red ? 1 : -1;
+                return color === Color.Red ? 1 : -1;
             default:
                 // `Left` and `Right` don't change for `y`
                 return 0;

@@ -747,4 +747,46 @@ describe("Square", ()  => {
             expect(squaresUp.length).to.equal(3);
         });
     });
+
+    describe("#isColor", () => {
+
+        const board = new Board(
+            `r . . . . . . . .
+                   . R . . . . . . .
+                   . . . . . . . . .
+                   . . . . . . . . .
+                   . . . . . . . . .
+                   . . . . . . . . .
+                   . . . . . . . . .
+                   . . . . . . . . .
+                   . . . . . . . . .
+                   . . . . . . . . .`);
+
+        it("should return expected values for a black square", () => {
+
+            const square = board.getSquare(0, 0);
+
+            expect(square.isColor(Color.Red)).to.equal(false);
+            expect(square.isColor(Color.Black)).to.equal(true);
+            expect(square.isColor(Color.None)).to.equal(false);
+        });
+
+        it("should return expected values for a red square", () => {
+
+            const square = board.getSquare(1, 1);
+
+            expect(square.isColor(Color.Red)).to.equal(true);
+            expect(square.isColor(Color.Black)).to.equal(false);
+            expect(square.isColor(Color.None)).to.equal(false);
+        });
+
+        it("should return expected values for an empty square", () => {
+
+            const square = board.getSquare(2, 2);
+
+            expect(square.isColor(Color.Red)).to.equal(false);
+            expect(square.isColor(Color.Black)).to.equal(false);
+            expect(square.isColor(Color.None)).to.equal(true);
+        });
+    });
 });
