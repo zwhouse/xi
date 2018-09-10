@@ -72,27 +72,30 @@ export class Board {
     isCheck(color: Color): boolean {
 
         if (this.areGeneralsLookingAtEachOther()) {
+            // Regardless of the color, this is always check
             return true;
         }
 
-        const opponentColor = Color.opposite(color);
-        const ownGeneralSquare = this.findGeneral(color);
-        const opponentSquares = [];
-        let opponentAttackingSquares: Square[] = [];
+        const generalSquare = this.findGeneral(color);
+        const otherSquares = [];
+        let otherAttackingSquares: Square[] = [];
 
+        // Find all square occupied by `Color.opposite(color)`
         for (const row of this.grid) {
             for (const square of row) {
-                if (square.isOccupied() && square.getPiece().color === opponentColor) {
-                    opponentSquares.push(square);
+                if (square.isOccupied() && square.isColor(Color.opposite(color))) {
+                    otherSquares.push(square);
                 }
             }
         }
 
-        for (const square of opponentSquares) {
-            opponentAttackingSquares = opponentAttackingSquares.concat(square.getPiece().getAttackingSquares(square));
+        // Find all squares being attacked by `Color.opposite(color)`
+        for (const square of otherSquares) {
+            otherAttackingSquares = otherAttackingSquares.concat(square.getPiece().getAttackingSquares(square));
         }
 
-        return opponentAttackingSquares.indexOf(ownGeneralSquare) >= 0;
+        // If the `generalSquare` is part of `otherAttackingSquares`, then `color` is check
+        return otherAttackingSquares.indexOf(generalSquare) >= 0;
     }
 
     areGeneralsLookingAtEachOther(): boolean {
