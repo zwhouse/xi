@@ -3,9 +3,9 @@ import 'mocha';
 import {Move} from "../src/move";
 import {Board} from "../src/board";
 
-describe("Move", ()  => {
+describe("Move", () => {
 
-    describe("#constructor", ()  => {
+    describe("#constructor", () => {
 
         it("should parse single digit rank and file properly", () => {
 
@@ -59,7 +59,7 @@ describe("Move", ()  => {
             9--10---------------[r]   1
                    9 8 7 6 5 4 3 2 1 (R)
     */
-    describe("#fromSquare", ()  => {
+    describe("#fromSquare", () => {
 
         it("should return different squares depending on color", () => {
             const board = new Board();
@@ -93,7 +93,7 @@ describe("Move", ()  => {
             9  10                r    1
                    9 8 7 6 5 4 3 2 1 (R)
     */
-    describe("#toSquare", ()  => {
+    describe("#toSquare", () => {
 
         it("should return different squares depending on color", () => {
             const board = new Board();

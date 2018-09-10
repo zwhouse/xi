@@ -3,9 +3,9 @@ import 'mocha';
 import {Direction} from "../src/direction";
 import {Color} from "../src/color";
 
-describe("Direction", ()  => {
+describe("Direction", () => {
 
-    describe("#dX", ()  => {
+    describe("#dX", () => {
 
         it("should return -1 for delta x for `Red` + `Left` and `Black` + `Right`", () => {
             expect(Direction.dX(Direction.Left, Color.Red)).to.equal(-1);
@@ -29,7 +29,7 @@ describe("Direction", ()  => {
         });
     });
 
-    describe("#dY", ()  => {
+    describe("#dY", () => {
 
         it("should return -1 for delta y for `Red` + `Up` and `Black` + `Down`", () => {
             expect(Direction.dY(Direction.Up, Color.Red)).to.equal(-1);

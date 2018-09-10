@@ -2,9 +2,9 @@ import {expect} from 'chai';
 import 'mocha';
 import {Board} from "../src/board";
 
-describe("General", ()  => {
+describe("General", () => {
 
-    describe("#getAttackingSquares", ()  => {
+    describe("#getAttackingSquares", () => {
 
         it("should return 4 squares when in the center", () => {
 

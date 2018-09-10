@@ -4,9 +4,9 @@ import {Piece} from "../src/piece";
 import {Color} from "../src/color";
 import {Board} from "../src/board";
 
-describe("Piece", ()  => {
+describe("Piece", () => {
 
-    describe("#constructor", ()  => {
+    describe("#constructor", () => {
 
         it("should initialise `Color.Red` for /[ACEGHRS]/i", () => {
             for (let char of "ACEGHRS") {
@@ -89,7 +89,7 @@ describe("Piece", ()  => {
         });
     });
 
-    describe("#isValidPieceChar", ()  => {
+    describe("#isValidPieceChar", () => {
 
         it("should return false for [ .?,'\"~\\t]", () => {
             for (let char of " .?,'\"~\t") {
@@ -112,7 +112,7 @@ describe("Piece", ()  => {
         });
     });
 
-    describe("#getColor", ()  => {
+    describe("#getColor", () => {
 
         it("should create `Color.Red` for both western and Chinese chars", () => {
             for (let char of "SCRHEAG兵炮俥傌相仕帥") {

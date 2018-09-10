@@ -45,7 +45,7 @@ export class Square {
 
             const square = this.board.getSquare(nextX, nextY);
 
-            amountOfPieces  += square.isOccupied() ? 1 : 0;
+            amountOfPieces += square.isOccupied() ? 1 : 0;
             squares.push(square);
 
             nextX += Direction.dX(direction, this.piece.color);

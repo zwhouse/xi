@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import 'mocha';
 import {Color} from "../src/color";
 
-describe("Color", ()  => {
+describe("Color", () => {
 
     describe("#opposite", () => {
 

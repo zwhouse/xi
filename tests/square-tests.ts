@@ -6,9 +6,9 @@ import {No} from "../src/piece";
 import {Board} from "../src/board";
 import {Direction} from "../src/direction";
 
-describe("Square", ()  => {
+describe("Square", () => {
 
-    describe("#getFile", ()  => {
+    describe("#getFile", () => {
 
         //  index  red  black
         //  0      9    1
@@ -57,7 +57,7 @@ describe("Square", ()  => {
         });
     });
 
-    describe("#getRank", ()  => {
+    describe("#getRank", () => {
 
         //  index  red  black
         //  0      10   1
@@ -110,7 +110,7 @@ describe("Square", ()  => {
         });
     });
 
-    describe("#getNotation", ()  => {
+    describe("#getNotation", () => {
 
         it("should return different notation for different colors", () => {
             const board = new Board();
@@ -119,7 +119,7 @@ describe("Square", ()  => {
         });
     });
 
-    describe("#setPiece", ()  => {
+    describe("#setPiece", () => {
 
         it("should return `No.piece` when square is not occupied", () => {
             const board = new Board();
@@ -454,7 +454,7 @@ describe("Square", ()  => {
 
         it("should return false for red when x <= 2", () => {
 
-            for (let x = 0;  x <= 2; x++) {
+            for (let x = 0; x <= 2; x++) {
                 const general = board.getSquare(x, 9);
                 expect(general.isInOwnCastle()).to.equal(false);
             }
@@ -462,7 +462,7 @@ describe("Square", ()  => {
 
         it("should return true for red when x >= 3 and x <= 5", () => {
 
-            for (let x = 3;  x <= 5; x++) {
+            for (let x = 3; x <= 5; x++) {
                 const general = board.getSquare(x, 9);
                 expect(general.isInOwnCastle()).to.equal(true);
             }
@@ -470,7 +470,7 @@ describe("Square", ()  => {
 
         it("should return false for red when x >= 6", () => {
 
-            for (let x = 6;  x <= 8; x++) {
+            for (let x = 6; x <= 8; x++) {
                 const general = board.getSquare(x, 9);
                 expect(general.isInOwnCastle()).to.equal(false);
             }
@@ -478,7 +478,7 @@ describe("Square", ()  => {
 
         it("should return false for red when y <= 6", () => {
 
-            for (let y = 1;  y <= 6; y++) {
+            for (let y = 1; y <= 6; y++) {
                 const general = board.getSquare(3, y);
                 expect(general.isInOwnCastle()).to.equal(false);
             }
@@ -486,7 +486,7 @@ describe("Square", ()  => {
 
         it("should return true for red when y >= 7", () => {
 
-            for (let y = 7;  y <= 9; y++) {
+            for (let y = 7; y <= 9; y++) {
                 const general = board.getSquare(3, y);
                 expect(general.isInOwnCastle()).to.equal(true);
             }
@@ -494,7 +494,7 @@ describe("Square", ()  => {
 
         it("should return false for black when x <= 2", () => {
 
-            for (let x = 0;  x <= 2; x++) {
+            for (let x = 0; x <= 2; x++) {
                 const general = board.getSquare(x, 0);
                 expect(general.isInOwnCastle()).to.equal(false);
             }
@@ -502,7 +502,7 @@ describe("Square", ()  => {
 
         it("should return true for black when x >= 3 and x <= 5", () => {
 
-            for (let x = 3;  x <= 5; x++) {
+            for (let x = 3; x <= 5; x++) {
                 const general = board.getSquare(x, 0);
                 expect(general.isInOwnCastle()).to.equal(true);
             }
@@ -510,7 +510,7 @@ describe("Square", ()  => {
 
         it("should return false for black when x >= 6", () => {
 
-            for (let x = 6;  x <= 8; x++) {
+            for (let x = 6; x <= 8; x++) {
                 const general = board.getSquare(x, 0);
                 expect(general.isInOwnCastle()).to.equal(false);
             }
@@ -518,7 +518,7 @@ describe("Square", ()  => {
 
         it("should return false for black when y >= 3", () => {
 
-            for (let y = 3;  y <= 8; y++) {
+            for (let y = 3; y <= 8; y++) {
                 const general = board.getSquare(5, y);
                 expect(general.isInOwnCastle()).to.equal(false);
             }
@@ -526,7 +526,7 @@ describe("Square", ()  => {
 
         it("should return true for black when y <= 2", () => {
 
-            for (let y = 0;  y <= 2; y++) {
+            for (let y = 0; y <= 2; y++) {
                 const general = board.getSquare(5, y);
                 expect(general.isInOwnCastle()).to.equal(true);
             }
@@ -548,7 +548,7 @@ describe("Square", ()  => {
                        S . . . . . . . .
                        S . . . . . . . .`);
 
-            for (let y = 5;  y <= 9; y++) {
+            for (let y = 5; y <= 9; y++) {
                 const soldier = board.getSquare(0, y);
                 expect(soldier.isOverTheRiver()).to.equal(false);
             }
@@ -567,7 +567,7 @@ describe("Square", ()  => {
                        S . . . . . . . .
                        S . . . . . . . .`);
 
-            for (let y = 0;  y <= 4; y++) {
+            for (let y = 0; y <= 4; y++) {
                 const soldier = board.getSquare(0, y);
                 expect(soldier.isOverTheRiver()).to.equal(true);
             }
@@ -586,7 +586,7 @@ describe("Square", ()  => {
                        s . . . . . . . .
                        s . . . . . . . .`);
 
-            for (let y = 0;  y <= 4; y++) {
+            for (let y = 0; y <= 4; y++) {
                 const soldier = board.getSquare(0, y);
                 expect(soldier.isOverTheRiver()).to.equal(false);
             }
@@ -605,7 +605,7 @@ describe("Square", ()  => {
                        s . . . . . . . .
                        s . . . . . . . .`);
 
-            for (let y = 5;  y <= 9; y++) {
+            for (let y = 5; y <= 9; y++) {
                 const soldier = board.getSquare(0, y);
                 expect(soldier.isOverTheRiver()).to.equal(true);
             }

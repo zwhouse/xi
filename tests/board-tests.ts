@@ -4,9 +4,9 @@ import {Board} from "../src/board";
 import {Move} from "../src/move";
 import {Color} from "../src/color";
 
-describe("Board", ()  => {
+describe("Board", () => {
 
-    describe("#constructor", ()  => {
+    describe("#constructor", () => {
 
         it("should throw an error when state has less than 90 chars", () => {
             expect(() => { new Board(".........................................................................................") }).to.throw(Error);
@@ -25,7 +25,7 @@ describe("Board", ()  => {
         });
     });
 
-    describe("#getSquare", ()  => {
+    describe("#getSquare", () => {
 
         it("outside 0..8 should throw error for `x`", () => {
             expect(() => { new Board().getSquare(-1, 4) }).to.throw(Error);
@@ -57,7 +57,7 @@ describe("Board", ()  => {
         });
     });
 
-    describe("#isTurn", ()  => {
+    describe("#isTurn", () => {
 
         it("should start with red's turn", () => {
 
@@ -299,7 +299,7 @@ describe("Board", ()  => {
         });
     });
 
-    describe("#makeMove", ()  => {
+    describe("#makeMove", () => {
 
         /*
               | 0 1 2 3 4 5 6 7 8

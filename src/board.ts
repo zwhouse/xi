@@ -107,8 +107,10 @@ export class Board {
             return false;
         }
 
+        // Inspect all squares between the 2 generals
         for (let y = blackGeneralSquare.y + 1; y < redGeneralSquare.y; y++) {
             if (this.getSquare(blackGeneralSquare.x, y).isOccupied()) {
+                // If there's 1 occupied, the generals can't be facing each other
                 return false;
             }
         }
@@ -201,7 +203,7 @@ export class Board {
             throw new Error(`invalid state: ${cleanedState}, expected to contain 90 chars`);
         }
 
-        let x = 0,  y = 0;
+        let x = 0, y = 0;
 
         for (let char of cleanedState) {
 

@@ -29,7 +29,7 @@ export class Elephant extends Piece {
         }
 
         return squares
-            .filter(x =>  !x.isOverTheRiver(position.getPiece().color))
+            .filter(x => !x.isOverTheRiver(position.getPiece().color))
             .filter(x => !x.isOccupied() || x.getPiece().color !== position.getPiece().color);
     }
 }

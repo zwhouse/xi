@@ -2,9 +2,9 @@ import {expect} from 'chai';
 import 'mocha';
 import {Board} from "../src/board";
 
-describe("Rook", ()  => {
+describe("Rook", () => {
 
-    describe("#getAttackingSquares", ()  => {
+    describe("#getAttackingSquares", () => {
 
         const board = new Board(
             `r s . . . . . S r

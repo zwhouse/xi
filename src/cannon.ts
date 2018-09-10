@@ -38,7 +38,7 @@ export class Cannon extends Piece {
             return;
         }
 
-        const lastSquare = squaresToAdd[squaresToAdd.length -  1];
+        const lastSquare = squaresToAdd[squaresToAdd.length - 1];
 
         if (lastSquare.getPiece().color !== color) {
             // The 2nd occupying square is the opponent's color: ad it to the list

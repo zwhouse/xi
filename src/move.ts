@@ -64,7 +64,7 @@ export class Move {
             9  10  . . . . . . . . .  1
            (y)     9 8 7 6 5 4 3 2 1 (R)
     */
-    private static getSquare(rank: number, file: number, color: Color, state: Board): Square  {
+    private static getSquare(rank: number, file: number, color: Color, state: Board): Square {
 
         const y = color === Color.Red ? 10 - rank : rank - 1;
         const x = color === Color.Red ? 9 - file : file - 1;
