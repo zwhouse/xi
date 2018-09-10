@@ -1,0 +1,215 @@
+import {Square} from "./square";
+import {No, Piece} from "./piece";
+import {Move} from "./move";
+import {Color} from "./color";
+import {Soldier} from "./soldier";
+import {Cannon} from "./cannon";
+import {Rook} from "./rook";
+import {Horse} from "./horse";
+import {Elephant} from "./elephant";
+import {Adviser} from "./adviser";
+import {General} from "./general";
+
+export class Board {
+
+    private static readonly beginState =
+        `r h e a g a e h r
+         . . . . . . . . .
+         . c . . . . . c .
+         s . s . s . s . s
+         . . . . . . . . .
+         . . . . . . . . .
+         S . S . S . S . S
+         . C . . . . . C .
+         . . . . . . . . .
+         R H E A G A E H R`;
+
+    private readonly grid: Square[][] = [];
+    private readonly moves: Move[] = [];
+    private readonly capturedPieces: { [color: string]: Piece[] } = { "red": [], "black": [] };
+
+    constructor(state: string = "") {
+        this.init(state || Board.beginState);
+    }
+
+    makeMove(move: Move) {
+
+        const from = move.fromSquare(this);
+        const to = move.toSquare(this);
+
+        if (!from.isOccupied())
+            throw new Error("from square is not occupied");
+
+        if (from.getPiece().color !== this.getTurn())
+            throw new Error(`it's not ${from.getPiece().color}'s turn`);
+
+        if (from.getPiece().color === to.getPiece().color)
+            throw new Error("cannot capture own piece");
+
+        const attacking = from.getPiece().getAttackingSquares(from);
+
+        if (attacking.indexOf(to) < 0)
+            throw new Error("illegal move");
+
+        move.captured = to.setPiece(from.getPiece());
+        from.setPiece(No.piece);
+
+        if (this.isCheck(this.getTurn())) {
+            // Cannot self-check: undo the move
+            from.setPiece(to.getPiece());
+            to.setPiece(move.captured);
+
+            throw new Error("cannot self check");
+        }
+
+        if (move.captured.color !== Color.None) {
+            this.capturedPieces[`${move.captured.color}`].push(move.captured);
+        }
+
+        this.moves.push(move);
+    }
+
+    isCheck(color: Color): boolean {
+
+        if (this.areGeneralsLookingAtEachOther()) {
+            return true;
+        }
+
+        const opponentColor = color === Color.Red ? Color.Black : Color.Red;
+        const ownGeneralSquare = this.findGeneral(color);
+        const opponentSquares = [];
+        let opponentAttackingSquares: Square[] = [];
+
+        for (const row of this.grid) {
+            for (const square of row) {
+                if (square.isOccupied() && square.getPiece().color === opponentColor) {
+                    opponentSquares.push(square);
+                }
+            }
+        }
+
+        for (const square of opponentSquares) {
+            opponentAttackingSquares = opponentAttackingSquares.concat(square.getPiece().getAttackingSquares(square));
+        }
+
+        return opponentAttackingSquares.indexOf(ownGeneralSquare) >= 0;
+    }
+
+    areGeneralsLookingAtEachOther(): boolean {
+
+        const redGeneralSquare = this.findGeneral(Color.Red);
+        const blackGeneralSquare = this.findGeneral(Color.Black);
+
+        if (redGeneralSquare.x !== blackGeneralSquare.x) {
+            return false;
+        }
+
+        for (let y = blackGeneralSquare.y + 1; y < redGeneralSquare.y; y++) {
+            if (this.getSquare(blackGeneralSquare.x, y).isOccupied()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    getTurn(): Color {
+        return this.moves.length === 0 || this.moves.length % 2 === 0 ? Color.Red : Color.Black;
+    }
+
+    isTurn(color: Color): boolean {
+        return this.getTurn() === color;
+    }
+
+    getCapturedPieces(color: Color): Piece[] {
+        return this.capturedPieces[`${color}`];
+    }
+
+    getSquare(x: number, y: number): Square {
+
+        if (y < 0 || y >= this.grid.length || x < 0 || x >= this.grid[0].length) {
+            throw new Error(`index out of bounds: ${x}, ${y}`)
+        }
+
+        return this.grid[y][x];
+    }
+
+    toString(): string {
+
+        let str = "";
+
+        for (let y = 0; y < this.grid.length; y++) {
+
+            for (let x = 0; x < this.grid[y].length; x++) {
+                str += this.grid[y][x].getPiece().toString() + " ";
+            }
+
+            str += "\n";
+        }
+
+        return str;
+    }
+
+    static createPiece(char: string): Piece {
+
+        switch (char.toLowerCase()) {
+            case "s": return new Soldier(char);
+            case "c": return new Cannon(char);
+            case "r": return new Rook(char);
+            case "h": return new Horse(char);
+            case "e": return new Elephant(char);
+            case "a": return new Adviser(char);
+            case "g": return new General(char);
+            case ".": return No.piece;
+        }
+
+        throw new Error(`unknown piece: ${char}`);
+    }
+
+    private findGeneral(color: Color): Square {
+
+        for (const row of this.grid) {
+            for (const square of row) {
+                if (square.isOccupied() && square.getPiece().color === color && square.getPiece() instanceof General) {
+                    return square;
+                }
+            }
+        }
+
+        // This will not happen since the generals cannot be captured
+        throw new Error();
+    }
+
+    private init(state: string) {
+
+        for (let y = 0; y < 10; y++) {
+            const row = [];
+
+            for (let x = 0; x < 9; x++) {
+                row.push(new Square(this, x, y));
+            }
+
+            this.grid.push(row);
+        }
+
+        const cleanedState = state.replace(/[^scrheag.]/ig, "");
+
+        if (cleanedState.length !== 90) {
+            throw new Error(`invalid state: ${cleanedState}, expected to contain 90 chars`);
+        }
+
+        let x = 0,  y = 0;
+
+        for (let char of cleanedState) {
+
+            this.grid[y][x].setPiece(Board.createPiece(char));
+
+            x++;
+
+            if (x > 8) {
+                x = 0;
+                y++;
+            }
+        }
+    }
+}

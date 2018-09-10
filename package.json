@@ -1,0 +1,20 @@
+{
+  "name": "xi",
+  "version": "1.0.0",
+  "description": "Xiangqi",
+  "main": "index.js",
+  "repository": "https://github.com/bkiers/xi",
+  "scripts": {
+    "test": "mocha -r ts-node/register tests/**/*.ts"
+  },
+  "author": "Bart Kiers",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/mocha": "^5.2.5",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.0.3"
+  }
+}
