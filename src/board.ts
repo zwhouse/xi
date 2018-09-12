@@ -34,30 +34,27 @@ export class Board {
 
     makeMove(move: Move) {
 
-        const from = move.fromSquare(this);
-        const to = move.toSquare(this);
-
-        if (!from.isOccupied())
+        if (!move.from.isOccupied())
             throw new Error("from square is not occupied");
 
-        if (from.getPiece().color !== this.getTurn())
-            throw new Error(`it's not ${from.getPiece().color}'s turn`);
+        if (move.from.getPiece().color !== this.getTurn())
+            throw new Error(`it's not ${move.from.getPiece().color}'s turn`);
 
-        if (from.isColor(to.getPiece().color))
+        if (move.from.isColor(move.to.getPiece().color))
             throw new Error("cannot capture own piece");
 
-        const attacking = from.getPiece().getAttackingSquares(from);
+        const attacking = move.from.getPiece().getAttackingSquares(move.from);
 
-        if (attacking.indexOf(to) < 0)
+        if (attacking.indexOf(move.to) < 0)
             throw new Error("illegal move");
 
-        move.captured = to.setPiece(from.getPiece());
-        from.setPiece(No.piece);
+        move.captured = move.to.setPiece(move.from.getPiece());
+        move.from.setPiece(No.piece);
 
         if (this.isCheck(this.getTurn())) {
             // Cannot self-check: undo the move
-            from.setPiece(to.getPiece());
-            to.setPiece(move.captured);
+            move.from.setPiece(move.to.getPiece());
+            move.to.setPiece(move.captured);
 
             throw new Error("cannot self check");
         }

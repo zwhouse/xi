@@ -18,13 +18,31 @@ import {No, Piece} from "./piece";
 export class Move {
 
     readonly color: Color;
+    readonly from: Square;
+    readonly to: Square;
     readonly fromRank: number;
     readonly fromFile: number;
     readonly toRank: number;
     readonly toFile: number;
-    captured: Piece;
+    captured: Piece = No.piece;
 
-    constructor(move: string) {
+    constructor(from: Square, to: Square) {
+
+        this.color = from.getPiece().color;
+
+        if (!from.isOccupied()) {
+            throw new Error(`invalid move for ${this.color}: ${from.str(this.color)} is not occupied`);
+        }
+
+        this.from = from;
+        this.to = to;
+        this.fromRank = from.getRank(this.color);
+        this.fromFile = from.getFile(this.color);
+        this.toRank = to.getRank(this.color);
+        this.toFile = to.getFile(this.color);
+    }
+
+    static create(move: string, board: Board): Move {
 
         const matches = /^\s*?([^\s])\s*\(\s*(\d\d?)\s*(\d)\s*\)\s*-\s*(\d\d?)\s*(\d)\s*$/.exec(move);
 
@@ -32,20 +50,21 @@ export class Move {
             throw new Error(`could not parse move: ${move}`);
         }
 
-        this.color = Piece.getColor(matches[1]);
-        this.fromRank = parseInt(matches[2]);
-        this.fromFile = parseInt(matches[3]);
-        this.toRank = parseInt(matches[4]);
-        this.toFile = parseInt(matches[5]);
-        this.captured = No.piece;
+        const color = Piece.getColor(matches[1]);
+        const fromRank = parseInt(matches[2]);
+        const fromFile = parseInt(matches[3]);
+        const toRank = parseInt(matches[4]);
+        const toFile = parseInt(matches[5]);
+
+        const from = Move.getSquare(fromRank, fromFile, color, board);
+        const to = Move.getSquare(toRank, toFile, color, board);
+
+        return new Move(from, to);
     }
 
-    fromSquare(state: Board): Square {
-        return Move.getSquare(this.fromRank, this.fromFile, this.color, state);
-    }
-
-    toSquare(state: Board): Square {
-        return Move.getSquare(this.toRank, this.toFile, this.color, state);
+    str(useChineseNotation: boolean = true): string {
+        const fromPiece = this.from.getPiece();
+        return `${useChineseNotation ? fromPiece.charChinese : fromPiece.charWestern} (${this.from.str(this.color)})-${this.to.str(this.color)}`;
     }
 
     /*

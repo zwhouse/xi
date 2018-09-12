@@ -69,7 +69,7 @@ describe("Board", () => {
         it("should change to black's turn after making a move", () => {
 
             const board = new Board();
-            const move = new Move("炮 (32)-35");
+            const move = Move.create("炮 (32)-35", board);
 
             expect(board.isTurn(Color.Red));
 
@@ -92,7 +92,7 @@ describe("Board", () => {
         it("should contain 1 black horse after capturing it by the red cannon", () => {
 
             const board = new Board();
-            const move = new Move("炮 (32)-102");
+            const move = Move.create("炮 (32)-102", board);
 
             board.makeMove(move);
 
@@ -320,7 +320,7 @@ describe("Board", () => {
         it("should move the red cannon from file 2 to 5", () => {
 
             const board = new Board();
-            const move = new Move("炮 (32)-35");
+            const move = Move.create("炮 (32)-35", board);
 
             expect(board.getSquare(7, 7).isOccupied()).to.equal(true);
             expect(board.getSquare(4, 7).isOccupied()).to.equal(false);
@@ -334,7 +334,7 @@ describe("Board", () => {
         it("should change the turn color after a move", () => {
 
             const board = new Board();
-            const move = new Move("炮 (32)-35");
+            const move = Move.create("炮 (32)-35", board);
 
             expect(board.isTurn(Color.Red));
 
@@ -358,7 +358,7 @@ describe("Board", () => {
                        R H E A G A E H R`
             );
 
-            expect(() => { board.makeMove(new Move("C (32)-38")) }).to.throw(Error);
+            expect(() => { board.makeMove(Move.create("C (32)-38", board)) }).to.throw(Error);
         });
 
         it("should throw an error when square is empty", () => {
@@ -376,7 +376,7 @@ describe("Board", () => {
                        R H E A G A E H R`
             );
 
-            expect(() => { board.makeMove(new Move("C (33)-38")) }).to.throw(Error);
+            expect(() => { board.makeMove(Move.create("C (33)-38", board)) }).to.throw(Error);
         });
 
         it("should throw an error for an illegal move", () => {
@@ -394,7 +394,7 @@ describe("Board", () => {
                        R H E A G A E H R`
             );
 
-            expect(() => { board.makeMove(new Move("C (33)-39")) }).to.throw(Error);
+            expect(() => { board.makeMove(Move.create("C (33)-39", board)) }).to.throw(Error);
         });
 
         it("should throw an error when it's not the color's turn", () => {
@@ -412,7 +412,7 @@ describe("Board", () => {
                        R H E A G A E H R`
             );
 
-            expect(() => { board.makeMove(new Move("c (32)-35")) }).to.throw(Error);
+            expect(() => { board.makeMove(Move.create("c (32)-35", board)) }).to.throw(Error);
         });
 
         it("should throw an error when performing a self-check", () => {
@@ -430,11 +430,11 @@ describe("Board", () => {
                        R H E A G A E H R`
             );
 
-            board.makeMove(new Move("C (32)-35"));
-            board.makeMove(new Move("s (45)-55"));
-            board.makeMove(new Move("S (45)-55"));
+            board.makeMove(Move.create("C (32)-35", board));
+            board.makeMove(Move.create("s (45)-55", board));
+            board.makeMove(Move.create("S (45)-55", board));
 
-            expect(() => { board.makeMove(new Move("s (55)-65")) }).to.throw(Error);
+            expect(() => { board.makeMove(Move.create("s (55)-65", board)) }).to.throw(Error);
 
             // The move "s (55)-65" should have been made undone
             expect(board.getSquare(4, 4).getPiece().charWestern).to.equal("s");

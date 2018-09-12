@@ -5,11 +5,37 @@ import {Board} from "../src/board";
 
 describe("Move", () => {
 
-    describe("#constructor", () => {
+    describe("#create", () => {
+
+        const board = new Board();
+
+        it("should throw an error when from-square is unoccupied", () => {
+            expect(() => { new Move(board.getSquare(0, 1), board.getSquare(0, 2)) }).to.throw(Error);
+        });
+
+        it("should not throw an error when from-square is occupied", () => {
+            new Move(board.getSquare(0, 0), board.getSquare(0, 1));
+        });
+    });
+
+    describe("#create", () => {
 
         it("should parse single digit rank and file properly", () => {
 
-            const move = new Move("卒 (12)-34");
+            const board = new Board(
+                `r h e a g a e h r
+                       . . s . . . . . .
+                       . c . . . . . c .
+                       s . s . s . s . s
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       S . S . S . S . S
+                       . C . . . . . C .
+                       . . . . . . . . .
+                       R H E A G A E H R`
+            );
+
+            const move = Move.create("卒 (12)-34", board);
 
             expect(move.fromRank).to.equal(1);
             expect(move.fromFile).to.equal(2);
@@ -19,7 +45,20 @@ describe("Move", () => {
 
         it("should parse double digit rank properly", () => {
 
-            const move = new Move("卒 (102)-103");
+            const board = new Board(
+                `r h e a g a e h r
+                       . . . . . . . . .
+                       . c . . . . . c .
+                       s . s . s . s . s
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       S . S . S . S . S
+                       . C . . . . . C .
+                       . . . . . . . . .
+                       R s E A G A E H R`
+            );
+
+            const move = Move.create("卒 (102)-103", board);
 
             expect(move.fromRank).to.equal(10);
             expect(move.fromFile).to.equal(2);
@@ -29,7 +68,20 @@ describe("Move", () => {
 
         it("should parse with spaces properly", () => {
 
-            const move = new Move("卒 ( 10 2 ) - 10 3 ");
+            const board = new Board(
+                `r h e a g a e h r
+                       . . . . . . . . .
+                       . c . . . . . c .
+                       s . s . s . s . s
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       S . S . S . S . S
+                       . C . . . . . C .
+                       . . . . . . . . .
+                       R s E A G A E H R`
+            );
+
+            const move = Move.create("卒 ( 10 2 ) - 10 3 ", board);
 
             expect(move.fromRank).to.equal(10);
             expect(move.fromFile).to.equal(2);
@@ -38,8 +90,9 @@ describe("Move", () => {
         });
 
         it("should throw error for invalid move", () => {
-            expect(() => { new Move("卒 (1122)-34") }).to.throw(Error);
-            expect(() => { new Move("卒 (12)-3344") }).to.throw(Error);
+            const board = new Board();
+            expect(() => { Move.create("卒 (1122)-34", board) }).to.throw(Error);
+            expect(() => { Move.create("卒 (12)-3344", board) }).to.throw(Error);
         });
     });
 
@@ -59,21 +112,20 @@ describe("Move", () => {
             9--10---------------[r]   1
                    9 8 7 6 5 4 3 2 1 (R)
     */
-    describe("#fromSquare", () => {
+    describe("#from", () => {
 
         it("should return different squares depending on color", () => {
+
             const board = new Board();
-            const redMove = new Move("S (12)-34");
-            const blackMove = new Move("s (12)-34");
 
-            const redSquareFrom = redMove.fromSquare(board);
-            const blackSquareFrom = blackMove.fromSquare(board);
+            const redMove = Move.create("S (12)-34", board);
+            const blackMove = Move.create("s (12)-34", board);
 
-            expect(redSquareFrom.x).to.equal(7);
-            expect(redSquareFrom.y).to.equal(9);
+            expect(redMove.from.x).to.equal(7);
+            expect(redMove.from.y).to.equal(9);
 
-            expect(blackSquareFrom.x).to.equal(1);
-            expect(blackSquareFrom.y).to.equal(0);
+            expect(blackMove.from.x).to.equal(1);
+            expect(blackMove.from.y).to.equal(0);
         });
     });
 
@@ -93,21 +145,34 @@ describe("Move", () => {
             9  10                r    1
                    9 8 7 6 5 4 3 2 1 (R)
     */
-    describe("#toSquare", () => {
+    describe("#to", () => {
 
         it("should return different squares depending on color", () => {
+
             const board = new Board();
-            const redMove = new Move("S (12)-34");
-            const blackMove = new Move("s (12)-34");
 
-            const redSquareTo = redMove.toSquare(board);
-            const blackSquareTo = blackMove.toSquare(board);
+            const redMove = Move.create("S (12)-34", board);
+            const blackMove = Move.create("s (12)-34", board);
 
-            expect(redSquareTo.x).to.equal(5);
-            expect(redSquareTo.y).to.equal(7);
+            expect(redMove.to.x).to.equal(5);
+            expect(redMove.to.y).to.equal(7);
 
-            expect(blackSquareTo.x).to.equal(3);
-            expect(blackSquareTo.y).to.equal(2);
+            expect(blackMove.to.x).to.equal(3);
+            expect(blackMove.to.y).to.equal(2);
+        });
+    });
+
+    describe("#str", () => {
+
+        const board = new Board();
+        const redMove = new Move(board.getSquare(8, 6), board.getSquare(8, 5));
+
+        it("should return western string representation when flag is false", () => {
+            expect(redMove.str(false)).to.equal("S (41)-51");
+        });
+
+        it("should return Chinese string representation when flag is true", () => {
+            expect(redMove.str()).to.equal("兵 (41)-51");
         });
     });
 });

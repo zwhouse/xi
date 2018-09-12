@@ -125,6 +125,10 @@ export class Square {
         return color === Color.Red ? 10 - this.y : 1 + this.y;
     }
 
+    str(color: Color): string {
+        return `${this.getRank(color)}${this.getFile(color)}`;
+    }
+
     private getNextXY(...directions: Direction[]): number[] {
 
         let newX = this.x;
