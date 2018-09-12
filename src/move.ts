@@ -24,6 +24,7 @@ export class Move {
     readonly fromFile: number;
     readonly toRank: number;
     readonly toFile: number;
+    readonly moveStr: string;
     captured: Piece = No.piece;
 
     constructor(from: Square, to: Square) {
@@ -40,6 +41,7 @@ export class Move {
         this.fromFile = from.getFile(this.color);
         this.toRank = to.getRank(this.color);
         this.toFile = to.getFile(this.color);
+        this.moveStr = `${this.from.getPiece().charChinese} (${this.from.str(this.color)})-${this.to.str(this.color)}`;
     }
 
     static create(move: string, board: Board): Move {
@@ -60,11 +62,6 @@ export class Move {
         const to = Move.getSquare(toRank, toFile, color, board);
 
         return new Move(from, to);
-    }
-
-    str(useChineseNotation: boolean = true): string {
-        const fromPiece = this.from.getPiece();
-        return `${useChineseNotation ? fromPiece.charChinese : fromPiece.charWestern} (${this.from.str(this.color)})-${this.to.str(this.color)}`;
     }
 
     /*

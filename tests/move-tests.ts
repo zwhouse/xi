@@ -5,7 +5,7 @@ import {Board} from "../src/board";
 
 describe("Move", () => {
 
-    describe("#create", () => {
+    describe("#constructor", () => {
 
         const board = new Board();
 
@@ -15,6 +15,12 @@ describe("Move", () => {
 
         it("should not throw an error when from-square is occupied", () => {
             new Move(board.getSquare(0, 0), board.getSquare(0, 1));
+        });
+
+        it("should create a Chinese string representation", () => {
+            const board = new Board();
+            const redMove = new Move(board.getSquare(8, 6), board.getSquare(8, 5));
+            expect(redMove.moveStr).to.equal("兵 (41)-51");
         });
     });
 
@@ -159,20 +165,6 @@ describe("Move", () => {
 
             expect(blackMove.to.x).to.equal(3);
             expect(blackMove.to.y).to.equal(2);
-        });
-    });
-
-    describe("#str", () => {
-
-        const board = new Board();
-        const redMove = new Move(board.getSquare(8, 6), board.getSquare(8, 5));
-
-        it("should return western string representation when flag is false", () => {
-            expect(redMove.str(false)).to.equal("S (41)-51");
-        });
-
-        it("should return Chinese string representation when flag is true", () => {
-            expect(redMove.str()).to.equal("兵 (41)-51");
         });
     });
 });
