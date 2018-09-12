@@ -5,7 +5,8 @@
   "main": "index.js",
   "repository": "https://github.com/bkiers/xi",
   "scripts": {
-    "test": "mocha -r ts-node/register tests/**/*.ts"
+    "test": "mocha -r ts-node/register tests/**/*.ts",
+    "build": "./node_modules/.bin/webpack"
   },
   "author": "Bart Kiers",
   "license": "MIT",
