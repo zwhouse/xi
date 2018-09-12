@@ -1,6 +1,7 @@
 import {Board} from "../board";
 import {UiSquare} from "./ui-square";
 import {Move} from "../move";
+import {Color} from "../color";
 
 export class UiBoard {
 
@@ -52,7 +53,6 @@ export class UiBoard {
         }
 
         const move = new Move(this.selectedSquare.square, uiSquare.square);
-        console.log(move.str());
 
         try {
             this.board.makeMove(move);
@@ -68,8 +68,10 @@ export class UiBoard {
     }
 
     private checkState() {
-        // TODO check mate
-        if (this.board.isCheck(this.board.getTurn())) {
+        if (this.board.isCheckmate(this.board.getTurn())) {
+            UiBoard.message(`${this.board.getTurn()} is checkmate, ${Color.opposite(this.board.getTurn())} wins`);
+        }
+        else if (this.board.isCheck(this.board.getTurn())) {
             UiBoard.message(`${this.board.getTurn()} is check`);
         }
     }

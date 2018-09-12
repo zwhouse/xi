@@ -28,11 +28,11 @@ export class Board {
     private readonly moves: Move[] = [];
     private readonly capturedPieces: { [color: string]: Piece[] } = { "red": [], "black": [] };
 
-    constructor(state: string = "") {
+    constructor(state?: string) {
         this.init(state || Board.beginState);
     }
 
-    makeMove(move: Move) {
+    makeMove(move: Move, isTryOuMove: boolean = false) {
 
         if (!move.from.isOccupied())
             throw new Error("from square is not occupied");
@@ -59,11 +59,43 @@ export class Board {
             throw new Error("cannot self check");
         }
 
+        if (isTryOuMove) {
+            move.from.setPiece(move.to.getPiece());
+            move.to.setPiece(move.captured);
+            return;
+        }
+
         if (move.captured.color !== Color.None) {
             this.capturedPieces[`${move.captured.color}`].push(move.captured);
         }
 
         this.moves.push(move);
+    }
+
+    isCheckmate(color: Color): boolean {
+
+        if (!this.isCheck(color)) {
+            return false;
+        }
+
+        const occupiedSquares = this.findOccupiedSquares(color);
+
+        for (const occupiedSquare of occupiedSquares) {
+
+            const attackingSquares = occupiedSquare.getPiece().getAttackingSquares(occupiedSquare);
+
+            for (const attackingSquare of attackingSquares) {
+
+                // If `makeMove(...)` doesn't throw an error, it means `color` can
+                // make a valid move and is therefor not checkmate
+                try {
+                    this.makeMove(new Move(occupiedSquare, attackingSquare), true);
+                    return false;
+                } catch (e) {}
+            }
+        }
+
+        return true;
     }
 
     isCheck(color: Color): boolean {
@@ -166,6 +198,21 @@ export class Board {
         }
 
         throw new Error(`unknown piece: ${char}`);
+    }
+
+    private findOccupiedSquares(color: Color): Square[] {
+
+        const squares = [];
+
+        for (const row of this.grid) {
+            for (const square of row) {
+                if (square.isOccupied() && square.isColor(color)) {
+                    squares.push(square);
+                }
+            }
+        }
+
+        return squares;
     }
 
     private findGeneral(color: Color): Square {

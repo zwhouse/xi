@@ -440,4 +440,45 @@ describe("Board", () => {
             expect(board.getSquare(4, 4).getPiece().charWestern).to.equal("s");
         });
     });
+
+    describe("#isCheckmate", () => {
+
+        it("should return true when black is checkmate", () => {
+
+            const board = new Board();
+
+            const moves = [
+                "兵 (45)-55", "卒 (45)-55",
+                "兵 (55)-65", "將 (15)-25",
+                "俥 (11)-21", "將 (25)-26",
+                "兵 (65)-66", "將 (26)-36",
+                "俥 (21)-24"
+            ];
+
+            for (const move of moves) {
+                board.makeMove(Move.create(move, board));
+            }
+
+            expect(board.isCheckmate(Color.Black)).to.equal(true);
+        });
+
+        it("should return false when black is not checkmate yet", () => {
+
+            const board = new Board();
+
+            const moves = [
+                "兵 (45)-55", "卒 (45)-55",
+                "兵 (55)-65", "將 (15)-25",
+                "俥 (11)-21", "將 (25)-26",
+                "兵 (65)-66", "士 (14)-25",
+                "俥 (21)-24"
+            ];
+
+            for (const move of moves) {
+                board.makeMove(Move.create(move, board));
+            }
+
+            expect(board.isCheckmate(Color.Black)).to.equal(false);
+        });
+    });
 });
