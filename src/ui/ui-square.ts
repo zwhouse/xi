@@ -1,5 +1,5 @@
-import {Square} from "../square";
-import {Color} from "../color";
+import {Square} from "../game/square";
+import {Color} from "../game/color";
 
 export class UiSquare {
 

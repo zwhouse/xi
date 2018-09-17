@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Xi - reset</title>
+</head>
+<body>
+
+<h1>reset</h1>
+<form action="/user/reset" method="post">
+
+    <input type="hidden" name="code" value="{{code}}">
+
+    <label for="password">new password</label><br>
+    <input id="password" type="password" name="password">
+    {{#if errors.password}} ! {{errors.password.msg}}{{/if}}<br>
+
+    <input type="submit" value="reset">
+</form>
+</body>
+</html>

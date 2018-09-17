@@ -1,7 +1,7 @@
-import {Board} from "../board";
+import {Board} from "../game/board";
 import {UiSquare} from "./ui-square";
-import {Move} from "../move";
-import {Color} from "../color";
+import {Move} from "../game/move";
+import {Color} from "../game/color";
 
 export class UiBoard {
 

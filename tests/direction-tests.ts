@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import 'mocha';
-import {Direction} from "../src/direction";
-import {Color} from "../src/color";
+import {Direction} from "../src/game/direction";
+import {Color} from "../src/game/color";
 
 describe("Direction", () => {
 

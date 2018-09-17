@@ -1,0 +1,12 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "database": "xi",
+  "entities": ["dist/src/db/*.js"],
+  "migrationsTableName": "__migrations__",
+  "migrations": ["dist/src/migration/*.js"],
+  "cli": {
+    "migrationsDir": "src/migration"
+  }
+}

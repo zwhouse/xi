@@ -1,10 +1,10 @@
 import {expect} from 'chai';
 import 'mocha';
-import {Square} from "../src/square";
-import {Color} from "../src/color";
-import {No} from "../src/piece";
-import {Board} from "../src/board";
-import {Direction} from "../src/direction";
+import {Square} from "../src/game/square";
+import {Color} from "../src/game/color";
+import {No} from "../src/game/piece";
+import {Board} from "../src/game/board";
+import {Direction} from "../src/game/direction";
 
 describe("Square", () => {
 

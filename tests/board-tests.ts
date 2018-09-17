@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 import 'mocha';
-import {Board} from "../src/board";
-import {Move} from "../src/move";
-import {Color} from "../src/color";
+import {Board} from "../src/game/board";
+import {Move} from "../src/game/move";
+import {Color} from "../src/game/color";
 
 describe("Board", () => {
 

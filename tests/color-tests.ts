@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import 'mocha';
-import {Color} from "../src/color";
+import {Color} from "../src/game/color";
 
 describe("Color", () => {
 

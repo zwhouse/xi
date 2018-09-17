@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Xi - reset</title>
+</head>
+<body>
+
+<h1>reset</h1>
+<form action="/user/reset-request" method="post">
+
+    {{#if info}}<h3>info: {{info}}</h3>{{/if}}
+
+    {{#if error}}<h3>error: {{error}}</h3>{{/if}}
+
+    <label for="email">email</label><br>
+    <input id="email" type="text" name="email" value="{{#if data.email}}{{data.email}}{{/if}}">
+    {{#if errors.email}} ! {{errors.email.msg}}{{/if}}<br>
+
+    <input type="submit" value="reset">
+</form>
+</body>
+</html>
