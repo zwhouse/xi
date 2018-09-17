@@ -9,14 +9,15 @@
     "build": "./node_modules/.bin/webpack",
     "start": "node dist/src/server.js",
     "debug": "node $NODE_DEBUG_OPTION server.js",
-    "mig:gen": "typeorm migration:generate -n ",
-    "mig:run": "typeorm migration:run"
+    "mig:gen": "tsc && typeorm migration:generate -n ",
+    "mig:run": "tsc && typeorm migration:run"
   },
   "author": "Bart Kiers",
   "license": "MIT",
   "devDependencies": {
     "@types/bcrypt": "^2.0.0",
     "@types/chai": "^4.1.4",
+    "@types/dotenv": "^4.0.3",
     "@types/express-handlebars": "0.0.30",
     "@types/mocha": "^5.2.5",
     "@types/pg": "^7.4.10",
@@ -36,6 +37,7 @@
     "bcrypt": "^3.0.0",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
+    "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
     "express-validator": "^5.3.0",
