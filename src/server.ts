@@ -10,6 +10,7 @@ import bodyParser = require("body-parser");
 import {createConnection} from "typeorm";
 import {User} from "./db/user";
 import {Game} from "./db/game";
+import {DbConfig} from "./util/db-config";
 
 const app: express.Application = express();
 const hbs: Exphbs = handlebars.create({ /* config */ });
@@ -25,11 +26,15 @@ app.use(validator());
 app.use(cookieParser());
 app.use(express.static('public'));
 
+const dbConfig = new DbConfig(process.env.DATABASE_URL as string);
+
 createConnection({
+    username: dbConfig.username,
+    password: dbConfig.password,
     type: "postgres",
-    host: "localhost",
-    port: 5432,
-    database: "xi",
+    host: dbConfig.host,
+    port: dbConfig.port,
+    database: dbConfig.database,
     entities: [User, Game],
     synchronize: true,
     logging: false
