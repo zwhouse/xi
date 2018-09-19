@@ -57,9 +57,11 @@ router.post('/id/:gameId/move/:move', async (req: Request, res: Response) => {
 });
 
 router.get('/id/:gameId', async (req: Request, res: Response) => {
+    const userRepo = create(UserRepository);
     const gameRepo = create(GameRepository);
+    const user = await userRepo.findByUsername(CookieJar.from(req).email);
     const game = await gameRepo.getById(parseInt(req.params.gameId));
-    res.render('game/id', { game: game });
+    res.render('game/id', { game: game, user: user });
 });
 
 router.get('/list', async (req: Request, res: Response) => {
