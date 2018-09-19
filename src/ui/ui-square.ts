@@ -47,7 +47,7 @@ export class UiSquare {
                 ctx.drawImage(img, marginWidth, marginHeight, w - (2 * marginWidth), h - (2 * marginHeight));
             };
 
-            img.src = `./svg/${this.square.getPiece().charWestern.toLowerCase()}${this.square.getPiece().color === Color.Red ? "r" : "b"}.svg`;
+            img.src = `/svg/${this.square.getPiece().charWestern.toLowerCase()}${this.square.getPiece().color === Color.Red ? "r" : "b"}.svg`;
         }
 
         return true;

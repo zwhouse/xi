@@ -8,5 +8,9 @@
 
 <h1>games</h1>
 
+{{#each games}}
+    <a href="/game/id/{{this.id}}">{{this.redPlayer.name}} vs {{this.blackPlayer.name}}</a><br>
+{{/each}}
+
 </body>
 </html>

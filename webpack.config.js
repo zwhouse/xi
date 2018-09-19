@@ -14,7 +14,7 @@ module.exports = {
     },
     output: {
         filename: "xi.js",
-        path: path.resolve(__dirname, './dist'),
+        path: path.resolve(__dirname, './public/js'),
         libraryTarget: 'var',
         library: 'xi'
     }

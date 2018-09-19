@@ -25,6 +25,7 @@ export class Move {
     readonly toRank: number;
     readonly toFile: number;
     readonly moveStr: string;
+    readonly moveStrSimple: string;
     captured: Piece = No.piece;
 
     constructor(from: Square, to: Square) {
@@ -42,6 +43,7 @@ export class Move {
         this.toRank = to.getRank(this.color);
         this.toFile = to.getFile(this.color);
         this.moveStr = `${this.from.getPiece().charChinese} (${this.from.str(this.color)})-${this.to.str(this.color)}`;
+        this.moveStrSimple = `${this.from.getPiece().charWestern} (${this.from.str(this.color)})-${this.to.str(this.color)}`;
     }
 
     static create(move: string, board: Board): Move {

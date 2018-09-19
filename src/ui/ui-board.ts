@@ -9,13 +9,15 @@ export class UiBoard {
     private static readonly black = "#000000";
 
     private readonly boardDiv: HTMLElement;
+    private readonly gameId: number;
     private readonly board: Board;
     private readonly squares: UiSquare[][];
     private selectedSquare?: UiSquare;
     private possibleMoves: UiSquare[] = [];
 
-    constructor(boardDiv: HTMLElement, moves: string[] = []) {
+    constructor(boardDiv: HTMLElement, gameId: number, moves: string[] = []) {
         this.boardDiv = boardDiv;
+        this.gameId = gameId;
         this.board = new Board();
         this.squares = [];
         this.init(moves);
@@ -54,17 +56,26 @@ export class UiBoard {
 
         const move = new Move(this.selectedSquare.square, uiSquare.square);
 
-        try {
-            this.board.makeMove(move);
-            this.possibleMoves.every(x => x.paint());
-            this.possibleMoves = [];
-            this.selectedSquare.paint();
-            uiSquare.paint();
-            this.selectedSquare = undefined;
-            this.checkState();
-        } catch (e) {
-            UiBoard.message(`Oops: ${e}`);
-        }
+        fetch(`${this.gameId}/move/${move.moveStrSimple}`, { method: "POST", credentials: "same-origin" })
+            .then((response: Response) => {
+                if (!response.ok) {
+                    console.log('NAH!');
+                    return;
+                }
+                try {
+                    this.board.makeMove(move);
+                    this.possibleMoves.every(x => x.paint());
+                    this.possibleMoves = [];
+                    this.selectedSquare!.paint();
+                    uiSquare.paint();
+                    this.selectedSquare = undefined;
+                    this.checkState();
+                } catch (e) {
+                    UiBoard.message(`Oops: ${e}`);
+                }
+            }).catch(e => {
+                console.log('backend says no...', e);
+            });
     }
 
     private checkState() {
@@ -163,6 +174,6 @@ export class UiBoard {
     }
 
     private static message(message: string) {
-        console.log(message);
+        console.log('message:', message);
     }
 }

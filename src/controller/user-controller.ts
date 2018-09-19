@@ -31,7 +31,17 @@ router.post('/login', async (req: Request, res: Response) => {
         return;
     }
 
-    res.cookie("xi" , new CookieJar(user.email!).encryptedJson()).redirect('../game/list');
+    const cookieJar = CookieJar.from(req);
+    cookieJar.email = user.email!;
+
+    let redirectUrl = "/game/list";
+
+    if (cookieJar.redirectTo !== "") {
+        redirectUrl = cookieJar.redirectTo;
+        cookieJar.redirectTo = "";
+    }
+
+    res.cookie("xi" , cookieJar.encryptedJson()).redirect(`..${redirectUrl}`);
 });
 
 router.get('/register', (req: Request, res: Response) => {
@@ -52,7 +62,8 @@ router.post('/register', [
         return;
     }
 
-    const user = await create(UserRepository).createAndSave(req.body.name, req.body.email, req.body.password);
+    const userRepo = create(UserRepository);
+    const user = await userRepo.createAndSave(req.body.name, req.body.email, req.body.password).catch(e => console.log('error:', e));
     const encrypted = CryptoUtils.encrypt(user.email!, secret) as string;
     const confirmationUrl = `<a href="${req.protocol}://${req.get('host')}/user/confirm?code=${encodeURIComponent(encrypted)}">Xi - confirm email</a>`;
 

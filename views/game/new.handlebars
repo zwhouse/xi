@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Xi - new game</title>
+</head>
+<body>
+
+<h1>new game</h1>
+<form action="/game/new" method="post">
+
+    <label for="opponent">choose your opponent</label>
+    <select name="opponent" id="opponent">
+        <option value="">-- choose --</option>
+        {{#each opponents}}
+            <option value="{{this.email}}">{{this.name}}</option>
+        {{/each}}
+    </select>
+
+    <div>
+        <p>choose your own color</p>
+
+        <input type="radio" name="color" value="red" id="red" checked />
+        <label for="red">red</label>
+
+        <input type="radio" name="color" value="black" id="black" />
+        <label for="black">black</label>
+    </div>
+
+    <p>
+        <input type="submit" value="invite">
+    </p>
+
+</form>
+</body>
+</html>
+
+<!--
+
+-->

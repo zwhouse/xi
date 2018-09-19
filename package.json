@@ -8,9 +8,9 @@
     "test": "mocha -r ts-node/register tests/**/*.ts",
     "build": "./node_modules/.bin/webpack",
     "start": "node dist/src/server.js",
-    "debug": "node $NODE_DEBUG_OPTION server.js",
-    "mig:gen": "tsc && typeorm migration:generate -n ",
-    "mig:run": "tsc && typeorm migration:run"
+    "mig:gen": "rm -rf ./dist/src/migration && tsc && typeorm migration:generate -n ",
+    "mig:run": "tsc && typeorm migration:run",
+    "test-data": "node ./dist/src/util/test-data.js"
   },
   "author": "Bart Kiers",
   "license": "MIT",

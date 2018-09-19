@@ -1,10 +1,8 @@
 import {UiBoard} from "./ui-board";
 
-export function load(boardId: string) {
-
-    const moves: string[] = [];
+export function load(boardId: string, gameId: number, moves: string[] = []) {
 
     const boardDiv = document.getElementById(boardId) as HTMLElement;
 
-    new UiBoard(boardDiv, moves);
+    new UiBoard(boardDiv, gameId, moves);
 }

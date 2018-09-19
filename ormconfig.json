@@ -8,5 +8,6 @@
   "migrations": ["dist/src/migration/*.js"],
   "cli": {
     "migrationsDir": "src/migration"
-  }
+  },
+  "logging": true
 }
