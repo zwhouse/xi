@@ -1,5 +1,6 @@
 import {Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {User} from "./user";
+import {Color} from "../game/color";
 
 @Entity()
 export class Game {
@@ -24,8 +25,15 @@ export class Game {
     @JoinColumn()
     blackPlayer?: User;
 
-    @Column()
-    isRedTurn: boolean = true;
+    @Index()
+    @ManyToOne(() => User, { eager: true })
+    @JoinColumn()
+    turnPlayer?: User;
+
+    @Index()
+    @ManyToOne(() => User, { eager: true })
+    @JoinColumn()
+    winner?: User;
 
     @Column()
     isAccepted: boolean = false;
@@ -33,14 +41,27 @@ export class Game {
     @Column()
     isGameOver: boolean = false;
 
+    @Column()
+    drawProposalCode: string = "";
+
+    // TODO points earned
+
     constructor(initiator: User, opponent: User, initiatorWithRed: boolean, isAccepted: boolean = false) {
         this.redPlayer = initiatorWithRed ? initiator : opponent;
         this.blackPlayer = initiatorWithRed ? opponent : initiator;
+        this.turnPlayer = initiatorWithRed ? initiator : opponent;
         this.isAccepted = isAccepted;
+    }
+
+    end(colorTurn: Color) {
+        this.isGameOver = true;
+        this.winner = colorTurn === Color.Red ? this.blackPlayer : this.redPlayer;
+        this.drawProposalCode = "";
     }
 
     setMoves(moves: string[]) {
         this.movesJson = JSON.stringify(moves);
-        this.isRedTurn = !this.isRedTurn;
+        this.turnPlayer = this.turnPlayer!.id === this.redPlayer!.id ? this.blackPlayer : this.redPlayer;
+        this.drawProposalCode = "";
     }
 }

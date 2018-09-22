@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import 'mocha';
-import {Board} from "../src/game/board";
+import {Board} from "../../src/game/board";
 
 describe("Elephant", () => {
 

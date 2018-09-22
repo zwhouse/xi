@@ -1,4 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, Index} from "typeorm";
+import {Result} from "../game/result";
 
 @Entity()
 export class User {
@@ -17,12 +18,22 @@ export class User {
     passwordHash?: string;
 
     @Column()
-    confirmedEmail?: boolean;
+    confirmedEmail: boolean = false;
 
-    constructor(name: string, email: string, hashedPassword: string, confirmedEmail: boolean = false) {
+    @Index()
+    @Column()
+    rating: number = 1200;
+
+    constructor(name: string, email: string, hashedPassword: string, confirmedEmail: boolean = false, rating: number = 1200) {
         this.name = name;
         this.email = email;
         this.passwordHash = hashedPassword;
         this.confirmedEmail = confirmedEmail;
+        this.rating = rating;
+    }
+
+    pointsAfter(result: Result, opponent: User, k: number = 25): number {
+        const winChance = 1.0 / (1 + Math.pow(10, (opponent.rating - this.rating) / 400.0));
+        return Math.round((result - winChance) * k);
     }
 }

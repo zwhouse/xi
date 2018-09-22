@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import 'mocha';
-import {Move} from "../src/game/move";
-import {Board} from "../src/game/board";
+import {Move} from "../../src/game/move";
+import {Board} from "../../src/game/board";
 
 describe("Move", () => {
 

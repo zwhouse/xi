@@ -8,18 +8,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script src="/js/xi.js"></script>
-    <script>
-        window.onload = function() {
-            xi.load("board", {{game.id}}, {{{game.movesJson}}});
-        }
-    </script>
+    <script src="/js/bootstrap-confirmation.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
 </head>
 <body>
-<h5>game: {{game.id}} - {{game.redPlayer.name}} vs {{game.blackPlayer.name}} (logged in: {{user.name}})</h5>
 <div class="container">
     <div class="row">
         <div class="col">
-            <div id="board" style="width: 500px;"></div>
+            <div id="board" style="width: 420px;"></div>
+            <button id="reverse" type="button" class="btn btn-outline-secondary btn-sm">reverse</button>
+            <button id="drawButton" type="button" class="btn btn-outline-warning btn-sm" data-toggle="confirmation" data-singleton="true">draw</button>
+            <button id="forfeitButton" type="button" class="btn btn-outline-danger btn-sm" data-toggle="confirmation" data-singleton="true">forfeit</button>
         </div>
         <div class="col">
             <table id="movesTable" class="table table-sm">
@@ -27,5 +26,29 @@
         </div>
     </div>
 </div>
+<script>
+
+    const board = xi.load("board", "movesTable", "{{game.redPlayer.name}}", "{{game.blackPlayer.name}}", {{game.id}}, {{{game.movesJson}}});
+
+    $('#reverse').click(function() {
+        board.reverse();
+    });
+
+    $('#drawButton').confirmation({
+        rootSelector: '[data-toggle=confirmation]',
+        title: "Propose a draw?",
+        onConfirm: function() {
+            board.proposeDraw();
+        }
+    });
+
+    $('#forfeitButton').confirmation({
+        rootSelector: '[data-toggle=confirmation]',
+        title: "Really forfeit this game?",
+        onConfirm: function() {
+            board.forfeitGame();
+        }
+    });
+</script>
 </body>
 </html>

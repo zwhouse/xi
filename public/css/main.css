@@ -1,0 +1,38 @@
+body {
+    padding-top: 20px;
+}
+
+#board {
+    padding-bottom: 20px;
+}
+
+#movesTable {
+    margin-left: 20px;
+}
+
+#movesTable td {
+    font-family: sans-serif;
+    font-size: 12px;
+}
+
+.red-move {
+    color: red;
+}
+
+.number-move {
+    color: #727272;
+}
+
+.captured {
+    height: 15px;
+    float: right;
+    padding-left: 5px;
+}
+
+body .table {
+    width: 0;
+}
+
+body .table td {
+    border-top: none;
+}

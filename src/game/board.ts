@@ -32,6 +32,12 @@ export class Board {
         this.init(state || Board.beginState);
     }
 
+    makeMoves(moves: string[], isTryOuMove: boolean = false) {
+        for (let move of moves) {
+            this.makeMove(Move.create(move, this), isTryOuMove);
+        }
+    }
+
     makeMove(move: Move, isTryOuMove: boolean = false) {
 
         if (!move.from.isOccupied())
@@ -157,6 +163,10 @@ export class Board {
 
     getCapturedPieces(color: Color): Piece[] {
         return this.capturedPieces[`${color}`];
+    }
+
+    getMoveCount(): number {
+        return this.moves.length;
     }
 
     getSquare(x: number, y: number): Square {

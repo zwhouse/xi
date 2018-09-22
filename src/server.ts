@@ -11,6 +11,7 @@ import {createConnection} from "typeorm";
 import {User} from "./db/user";
 import {Game} from "./db/game";
 import {DbConfig} from "./util/db-config";
+import {HomeController} from "./controller/home-controller";
 
 const app: express.Application = express();
 const hbs: Exphbs = handlebars.create({ /* config */ });
@@ -45,8 +46,11 @@ createConnection({
 
     app.use('/user', UserController);
     app.use('/game', GameController);
+    app.use('/', HomeController);
 
     app.listen(port, () => {
         console.log(`Listening at http://localhost:${port}/`);
     });
 }).catch(error => console.log(error));
+
+// TODO: http://bootstrap-confirmation.js.org

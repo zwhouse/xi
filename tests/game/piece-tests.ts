@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import 'mocha';
-import {Piece} from "../src/game/piece";
-import {Color} from "../src/game/color";
-import {Board} from "../src/game/board";
+import {Piece} from "../../src/game/piece";
+import {Color} from "../../src/game/color";
+import {Board} from "../../src/game/board";
 
 describe("Piece", () => {
 
