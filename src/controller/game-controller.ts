@@ -8,6 +8,7 @@ import {Board} from "../game/board";
 import {Guid} from "guid-typescript";
 import {MailService} from "../service/mail-service";
 import {response} from "../util/response-utils";
+import {drawProposal} from "../template/mail";
 
 const mailService = new MailService();
 const router: Router = Router();
@@ -65,12 +66,7 @@ router.post("/id/:gameId/propose-draw", async (req: Request, res: Response) => {
 
     const opponent = game.getOpponentOf(user!);
 
-    const gameLink = `${req.protocol}://${req.get("host")}/game/id/${game.id}`;
-    const drawLink = `${gameLink}/accept-draw?code=${game.drawProposalCode}`;
-
-    await mailService.send(opponent.email!, `${user!.name} proposes a draw for game ${game.id}`,
-        `for game <a href="${gameLink}">${game.id}</a>, click <a href="${drawLink}">here</a> to accept the proposal`);
-
+    await mailService.send(opponent.email!, `${user!.name} proposes a draw for game ${game.id}`, drawProposal(req, game));
     await gameRepo.save(game);
 
     res.status(200).end();

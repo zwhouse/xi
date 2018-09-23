@@ -8,6 +8,7 @@ import {CryptoUtils} from "../util/crypto-utils";
 import {secret} from "../server";
 import {CookieJar} from "../middleware/cookie-jar";
 import {render} from "../util/response-utils";
+import {confirmationRegister, resetPassword} from "../template/mail";
 
 const mailService = new MailService();
 const router: Router = Router();
@@ -64,9 +65,8 @@ router.post("/register", [
     const userRepo = create(UserRepository);
     const user = await userRepo.createAndSave(req.body.name, req.body.email, req.body.password).catch(e => console.log("error:", e));
     const encrypted = CryptoUtils.encrypt(user.email!, secret) as string;
-    const confirmationUrl = `<a href="${req.protocol}://${req.get("host")}/user/confirm?code=${encodeURIComponent(encrypted)}">Xi - confirm email</a>`;
 
-    await mailService.send(user.email!, "Xi - confirm email address", confirmationUrl);
+    await mailService.send(user.email!, "Xi - confirm email address", confirmationRegister(req, encrypted));
 
     res.render("user/register-success");
 });
@@ -105,11 +105,10 @@ router.post("/reset-request", async (req: Request, res: Response) => {
     const user = await repo.findByUsername(req.body.email);
 
     if (user === undefined)
-        return render(res, "user/reset-pending");;
+        return render(res, "user/reset-pending");
 
     const encrypted = CryptoUtils.encrypt(user.email!, secret) as string;
-    const resetUrl = `<a href="${req.protocol}://${req.get("host")}/user/reset?code=${encodeURIComponent(encrypted)}">Xi - reset password</a>`;
-    await mailService.send(user.email!, "Xi - reset password", resetUrl);
+    await mailService.send(user.email!, "Xi - reset password", resetPassword(req, encrypted));
 
     res.render("user/reset-pending");
 });
