@@ -12,22 +12,20 @@ export class UiBoard {
     private readonly boardDiv: HTMLElement;
     protected readonly movesTable: HTMLTableElement;
     private readonly gameId: number;
+    private readonly reversed: boolean;
     private readonly board: Board;
     private readonly squares: UiSquare[][];
     private selectedSquare?: UiSquare;
     private possibleMoves: UiSquare[] = [];
 
-    constructor(boardDiv: HTMLElement, movesTable: HTMLTableElement, gameId: number, moves: string[] = []) {
+    constructor(boardDiv: HTMLElement, movesTable: HTMLTableElement, gameId: number, reversed: boolean, moves: string[] = []) {
         this.boardDiv = boardDiv;
         this.movesTable = movesTable;
         this.gameId = gameId;
+        this.reversed = reversed;
         this.board = new Board();
         this.squares = [];
         this.init(moves);
-    }
-
-    reverse() {
-        console.log('~> reverse...');
     }
 
     proposeDraw() {
@@ -120,47 +118,47 @@ export class UiBoard {
 
         const cellDimension = this.boardDiv.offsetWidth / 11;
 
-        this.boardDiv.appendChild(UiBoard.createRowDiv(cellDimension, UiBoard.black, "", "1", "2", "3", "4", "5", "6", "7", "8", "9", ""));
+        this.insert(this.boardDiv, this.createRowDiv(cellDimension, UiBoard.black, "", "1", "2", "3", "4", "5", "6", "7", "8", "9", ""));
 
         for (let y = 0; y < 10; y++) {
 
-            const rowDiv = UiBoard.createRowDiv(cellDimension);
+            const rowDiv = this.createRowDiv(cellDimension);
             this.squares.push([]);
 
             for (let x = 0; x < 9; x++) {
 
                 if (x === 0) {
-                    rowDiv.appendChild(UiBoard.createDiv(cellDimension, `${y + 1}`, UiBoard.black));
+                    this.insert(rowDiv, UiBoard.createDiv(cellDimension, `${y + 1}`, UiBoard.black));
                 }
 
                 const canvas = UiBoard.createCanvas(cellDimension);
-                rowDiv.appendChild(canvas);
+                this.insert(rowDiv, canvas);
 
-                const uiSquare = new UiSquare(canvas, this.board.getSquare(x, y));
+                const uiSquare = new UiSquare(canvas, this.board.getSquare(x, y), this.reversed);
 
                 uiSquare.canvas.onmousedown = () => { this.click(uiSquare) };
 
                 this.squares[y].push(uiSquare);
 
                 if (x === 8) {
-                    rowDiv.appendChild(UiBoard.createDiv(cellDimension, `${10 - y}`, UiBoard.red));
+                    this.insert(rowDiv, UiBoard.createDiv(cellDimension, `${10 - y}`, UiBoard.red));
                 }
             }
 
-            this.boardDiv.appendChild(rowDiv);
+            this.insert(this.boardDiv, rowDiv);
         }
 
-        this.boardDiv.appendChild(UiBoard.createRowDiv(cellDimension, UiBoard.red, "", "9", "8", "7", "6", "5", "4", "3", "2", "1", ""));
+        this.insert(this.boardDiv, this.createRowDiv(cellDimension, UiBoard.red, "", "9", "8", "7", "6", "5", "4", "3", "2", "1", ""));
 
         this.checkState();
     }
 
-    private static createRowDiv(cellDimension: number, textColor: string = UiBoard.black, ...childDivs: string[]) {
+    private createRowDiv(cellDimension: number, textColor: string = UiBoard.black, ...childDivs: string[]) {
         const rowDiv = document.createElement("div");
         rowDiv.style.height = `${cellDimension}px`;
 
         for (let  i = 0; i < childDivs.length; i++) {
-            rowDiv.appendChild(UiBoard.createDiv(cellDimension, childDivs[i], textColor));
+            this.insert(rowDiv, UiBoard.createDiv(cellDimension, childDivs[i], textColor));
         }
 
         return rowDiv;
@@ -203,7 +201,7 @@ export class UiBoard {
             row = this.movesTable.insertRow();
             const numberCell = row.insertCell();
             numberCell.className = "number-move";
-            numberCell.appendChild(document.createTextNode(`${this.movesTable.rows.length - 1}`));
+            this.insert(numberCell, document.createTextNode(`${this.movesTable.rows.length - 1}`));
         }
         else {
             row = this.movesTable.rows[this.movesTable.rows.length - 1];
@@ -211,7 +209,7 @@ export class UiBoard {
 
         const moveCell = row.insertCell();
         moveCell.className = `move ${turn}-move`;
-        moveCell.appendChild(document.createTextNode(move.moveStr));
+        this.insert(moveCell, document.createTextNode(move.moveStr));
 
         //const moveIndex = this.board.getMoveCount();
         //moveCell.addEventListener("click", () => this.showMove(moveIndex), false);
@@ -220,7 +218,17 @@ export class UiBoard {
             const img = document.createElement('img');
             img.src = `/svg/${move.captured.charWestern.toLowerCase()}${move.captured.color === Color.Red ? "r" : "b"}.svg`;
             img.className = "captured";
-            moveCell.appendChild(img);
+            this.insert(moveCell, img);
+        }
+    }
+
+
+    private insert(parent: HTMLElement, child: Node) {
+        if (this.reversed) {
+            parent.insertBefore(child, parent.childNodes[0] || null);
+        }
+        else {
+            parent.appendChild(child);
         }
     }
 

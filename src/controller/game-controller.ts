@@ -92,7 +92,7 @@ router.get("/id/:gameId", async (req: Request, res: Response) => {
     const gameRepo = create(GameRepository);
     const user = await userRepo.findByUsername(CookieJar.from(req).email);
     const game = await gameRepo.getById(parseInt(req.params.gameId));
-    res.render("game/id", { game: game, user: user });
+    res.render("game/id", { game: game, user: user, reversed: game!.blackPlayer!.id === user!.id });
 });
 
 router.get("/list", async (req: Request, res: Response) => {

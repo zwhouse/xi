@@ -5,10 +5,12 @@ export class UiSquare {
 
     readonly canvas: HTMLCanvasElement;
     readonly square: Square;
+    readonly reversed: boolean;
 
-    constructor(canvas: HTMLCanvasElement, square: Square) {
+    constructor(canvas: HTMLCanvasElement, square: Square, reversed: boolean) {
         this.canvas = canvas;
         this.square = square;
+        this.reversed = reversed;
         this.paint(false);
     }
 
@@ -85,48 +87,64 @@ export class UiSquare {
         const y = this.square.y;
 
         // 0 degrees
-        if (x < 8)
+        if (this.reversed ? x > 0 : x < 8)
             UiSquare.drawLineSegment(ctx, w, h, w, h / 2.0);
 
-        // 45 degrees
-        if ((y === 1 && x === 4) || (y === 2 && x === 3) || (y === 8 && x === 4) || (y === 9 && x === 3))
-            UiSquare.drawLineSegment(ctx, w, h, w, 0);
-
         // 90 degrees
-        if (y > 0 && !UiSquare.isRiver(y === 5, x))
+        if (this.reversed ?
+            (y < 9 && !UiSquare.isRiver( y === 4, x)) :
+            (y > 0 && !UiSquare.isRiver( y === 5, x)))
             UiSquare.drawLineSegment(ctx, w, h, w / 2.0, 0);
 
-        // 135 degrees
-        if ((y === 1 && x === 4) || (y === 2 && x === 5) || (y === 8 && x === 4) || (y === 9 && x === 5))
-            UiSquare.drawLineSegment(ctx, w, h, 0, 0);
-
         // 180 degrees
-        if (x > 0)
+        if (this.reversed ? x < 8 : x > 0)
             UiSquare.drawLineSegment(ctx, w, h, 0, h / 2.0);
 
-        // 225 degrees
-        if ((y === 0 && x === 5) || (y === 1 && x === 4) || (y === 7 && x === 5) || (y === 8 && x === 4))
-            UiSquare.drawLineSegment(ctx, w, h, 0, h);
-
         // 270 degrees
-        if (y < 9 && !UiSquare.isRiver(y === 4, x))
+        if (this.reversed ?
+            (y > 0 && !UiSquare.isRiver(y === 5, x)) :
+            (y < 9 && !UiSquare.isRiver(y === 4, x)))
             UiSquare.drawLineSegment(ctx, w, h, w / 2.0, h);
 
+        // 45 degrees
+        if (this.reversed ?
+            ((y === 1 && x === 4) || (y === 7 && x === 5) || (y === 8 && x === 4) || (y === 0 && x === 5)) :
+            ((y === 1 && x === 4) || (y === 2 && x === 3) || (y === 8 && x === 4) || (y === 9 && x === 3)))
+            UiSquare.drawLineSegment(ctx, w, h, w, 0);
+
+        // 135 degrees
+        if (this.reversed ?
+            ((y === 0 && x === 3) || (y === 1 && x === 4) || (y === 7 && x === 3) || (y === 8 && x === 4)) :
+            ((y === 1 && x === 4) || (y === 2 && x === 5) || (y === 8 && x === 4) || (y === 9 && x === 5)))
+            UiSquare.drawLineSegment(ctx, w, h, 0, 0);
+
+        // 225 degrees
+        if (this.reversed ?
+            ((y === 1 && x === 4) || (y === 2 && x === 3) || (y === 8 && x === 4) || (y === 9 && x === 3)) :
+            ((y === 0 && x === 5) || (y === 1 && x === 4) || (y === 7 && x === 5) || (y === 8 && x === 4)))
+            UiSquare.drawLineSegment(ctx, w, h, 0, h);
+
         // 315 degrees
-        if ((y === 0 && x === 3) || (y === 1 && x === 4) || (y === 7 && x === 3) || (y === 8 && x === 4))
+        if (this.reversed ?
+            ((y === 1 && x === 4) || (y === 2 && x === 5) || (y === 8 && x === 4) || (y === 9 && x === 5)) :
+            ((y === 0 && x === 3) || (y === 1 && x === 4) || (y === 7 && x === 3) || (y === 8 && x === 4)))
             UiSquare.drawLineSegment(ctx, w, h, w, h);
 
         // Cannon and soldier markers
-        // quadrants 1 and 2
-        if (((y === 2 || y === 7) && (x === 1 || x === 7)) ||
-            ((y === 3 || y === 6) && (x === 0 || x === 2 || x === 4 || x === 6))) {
+
+        if (((y === 2 || y === 7) && (x === 1 || x == 7)) || ((y === 3 || y === 6) && (x === 2 || x == 4 || x == 6))) {
+            UiSquare.drawMarker(ctx, w, h, 1);
+            UiSquare.drawMarker(ctx, w, h, 2);
+            UiSquare.drawMarker(ctx, w, h, 3);
+            UiSquare.drawMarker(ctx, w, h, 4);
+        }
+
+        if ((y === 3 || y === 6) && (this.reversed ? x === 8 : x === 0)) {
             UiSquare.drawMarker(ctx, w, h, 1);
             UiSquare.drawMarker(ctx, w, h, 2);
         }
 
-        // quadrants 3 and 4
-        if (((y === 2 || y === 7) && (x === 1 || x === 7)) ||
-            ((y === 3 || y === 6) && (x === 8 || x === 2 || x === 4 || x === 6))) {
+        if ((y === 3 || y === 6) && (this.reversed ? x === 0 : x === 8)) {
             UiSquare.drawMarker(ctx, w, h, 3);
             UiSquare.drawMarker(ctx, w, h, 4);
         }

@@ -16,7 +16,6 @@
     <div class="row">
         <div class="col">
             <div id="board" style="width: 420px;"></div>
-            <button id="reverse" type="button" class="btn btn-outline-secondary btn-sm">reverse</button>
             <button id="drawButton" type="button" class="btn btn-outline-warning btn-sm" data-toggle="confirmation" data-singleton="true">draw</button>
             <button id="forfeitButton" type="button" class="btn btn-outline-danger btn-sm" data-toggle="confirmation" data-singleton="true">forfeit</button>
         </div>
@@ -28,11 +27,7 @@
 </div>
 <script>
 
-    const board = xi.load("board", "movesTable", "{{game.redPlayer.name}}", "{{game.blackPlayer.name}}", {{game.id}}, {{{game.movesJson}}});
-
-    $('#reverse').click(function() {
-        board.reverse();
-    });
+    const board = xi.load("board", "movesTable", "{{game.redPlayer.name}}", "{{game.blackPlayer.name}}", {{game.id}}, {{reversed}}, {{{game.movesJson}}});
 
     $('#drawButton').confirmation({
         rootSelector: '[data-toggle=confirmation]',
