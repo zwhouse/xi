@@ -32,17 +32,15 @@
     $('#drawButton').confirmation({
         rootSelector: '[data-toggle=confirmation]',
         title: "Propose a draw?",
-        onConfirm: function() {
-            board.proposeDraw();
-        }
+        popout: true,
+        onConfirm: function() { board.proposeDraw() }
     });
 
     $('#forfeitButton').confirmation({
         rootSelector: '[data-toggle=confirmation]',
         title: "Really forfeit this game?",
-        onConfirm: function() {
-            board.forfeitGame();
-        }
+        popout: true,
+        onConfirm: function() { board.forfeitGame() }
     });
 </script>
 </body>
