@@ -80,10 +80,6 @@ export class Board {
 
     isCheckmate(color: Color): boolean {
 
-        if (!this.isCheck(color)) {
-            return false;
-        }
-
         const occupiedSquares = this.findOccupiedSquares(color);
 
         for (const occupiedSquare of occupiedSquares) {
@@ -163,10 +159,6 @@ export class Board {
 
     getCapturedPieces(color: Color): Piece[] {
         return this.capturedPieces[`${color}`];
-    }
-
-    getMoveCount(): number {
-        return this.moves.length;
     }
 
     getSquare(x: number, y: number): Square {

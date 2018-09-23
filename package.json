@@ -6,7 +6,7 @@
   "repository": "https://github.com/bkiers/xi",
   "scripts": {
     "test": "mocha -r ts-node/register tests/**/*.ts",
-    "build": "./node_modules/.bin/webpack",
+    "build": "rm -rf ./dist && tsc && ./node_modules/.bin/webpack",
     "start": "node dist/src/server.js",
     "mig:gen": "rm -rf ./dist/src/migration && tsc && typeorm migration:generate -n ",
     "mig:run": "tsc && typeorm migration:run",

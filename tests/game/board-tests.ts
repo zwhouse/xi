@@ -480,5 +480,23 @@ describe("Board", () => {
 
             expect(board.isCheckmate(Color.Black)).to.equal(false);
         });
+
+        it("should return true if black is stalemate", () => {
+
+            const board = new Board(
+                `. . . g . . . . .
+                       . . . . S . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . G . . . .`
+            );
+
+            expect(board.isCheckmate(Color.Black)).to.equal(true);
+        });
     });
 });

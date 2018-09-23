@@ -6,63 +6,125 @@ import {UserRepository} from "../repository/user-repository";
 import {GameRepository} from "../repository/game-repository";
 import {Board} from "../game/board";
 import {Guid} from "guid-typescript";
+import {MailService} from "../service/mail-service";
+import {response} from "../util/response-utils";
 
+const mailService = new MailService();
 const router: Router = Router();
 const create = getCustomRepository;
 
 router.use(loggedInCheck);
 
-// TODO post
-router.get("/id/:gameId/propose-draw", async (req: Request, res: Response) => {
+router.post("/id/:gameId/forfeit", async (req: Request, res: Response) => {
 
     const gameRepo = create(GameRepository);
+    const userRepo = create(UserRepository);
     const game = await gameRepo.getById(parseInt(req.params.gameId));
 
-    if (game === undefined || game.isGameOver || game.drawProposalCode !== "") {
-        res.statusMessage = "NOPE, TODO";
+    if (game === undefined)
+        return response(res, 404, `no such game: ${req.params.gameId}`);
+
+    if (game.isGameOver)
+        return response(res, 400, `game ${req.params.gameId} is over`);
+
+    if (!game.isAccepted)
+        return response(res, 400, `game ${req.params.gameId} hasn't started yet`);
+
+    const user = await userRepo.findByUsername(CookieJar.from(req).email);
+
+    if (user!.email !== game.redPlayer!.email && user!.email !== game.blackPlayer!.email)
+        return response(res, 403, `only ${game.redPlayer!.name} and ${game.blackPlayer!.name} can forfeit`);
+
+    game.forfeit(user!);
+    await gameRepo.save(game);
+    await userRepo.save(game.redPlayer!);
+    await userRepo.save(game.blackPlayer!);
+
+    res.status(200).end();
+});
+
+
+router.post("/id/:gameId/propose-draw", async (req: Request, res: Response) => {
+
+    const gameRepo = create(GameRepository);
+    const userRepo = create(UserRepository);
+    const game = await gameRepo.getById(parseInt(req.params.gameId));
+
+    if (game === undefined || game.isGameOver || !game.isAccepted || game.drawProposalCode !== "") {
+        res.statusMessage = "NOPE, TODO 2";
         res.status(400).end();
         return;
     }
 
-    const cookieJar = CookieJar.from(req);
+    const user = await userRepo.findByUsername(CookieJar.from(req).email);
 
-    if (cookieJar.email !== game.redPlayer!.email && cookieJar.email !== game.blackPlayer!.email) {
-        res.statusMessage = `only ${game.redPlayer!.name} and ${game.blackPlayer!.name} can propose a draw`;
-        res.status(403).end();
-        return;
-    }
+    if (user!.email !== game.redPlayer!.email && user!.email !== game.blackPlayer!.email)
+        return response(res, 403, `only ${game.redPlayer!.name} and ${game.blackPlayer!.name} can propose a draw`);
 
-    const code = Guid.create().toString();
-    game.drawProposalCode = code;
+    game.drawProposalCode = Guid.create().toString();
+
+    const opponent = game.getOpponentOf(user!);
+
+    const gameLink = `${req.protocol}://${req.get("host")}/game/id/${game.id}`;
+    const drawLink = `${gameLink}/accept-draw?code=${game.drawProposalCode}`;
+
+    await mailService.send(opponent.email!, `${user!.name} proposes a draw for game ${game.id}`,
+        `for game <a href="${gameLink}">${game.id}</a>, click <a href="${drawLink}">here</a> to accept the proposal`);
+
     await gameRepo.save(game);
 
-    const link = `${req.protocol}://${req.get("host")}/game/id/${game.id}/accept-draw?code=${code}`;
-
-    res.send(link);
+    res.status(200).end();
 });
 
 router.get("/id/:gameId/accept-draw", async (req: Request, res: Response) => {
-    res.send(`TODO: handle ${req.query.code}`);
+
+    const gameRepo = create(GameRepository);
+    const userRepo = create(UserRepository);
+    const game = await gameRepo.getById(parseInt(req.params.gameId));
+    const code = req.query.code;
+
+    if (code === null || game === undefined || game.isGameOver || game.drawProposalCode !== code) {
+        res.statusMessage = "NOPE, TODO 1";
+        res.status(400).end();
+        return;
+    }
+
+    if (!code)
+        return response(res, 400, `invalid code: ${code}`);
+
+    if (game === undefined)
+        return response(res, 404, `no such game: ${req.params.gameId}`);
+
+    if (game.isGameOver)
+        return response(res, 400, `game ${req.params.gameId} is over`);
+
+    if (!game.isAccepted)
+        return response(res, 400, `game ${req.params.gameId} hasn't started yet`);
+
+    game.draw();
+    await gameRepo.save(game);
+    await userRepo.save(game.redPlayer!);
+    await userRepo.save(game.blackPlayer!);
+
+    res.redirect(`/game/id/${game.id}`);
 });
 
 router.post("/id/:gameId/move/:move", async (req: Request, res: Response) => {
 
     const gameRepo = create(GameRepository);
+    const userRepo = create(UserRepository);
     const game = await gameRepo.getById(parseInt(req.params.gameId));
 
-    if (game === undefined || game.isGameOver) {
-        res.statusMessage = game === undefined ? "game does not exist" : "game is over";
-        res.status(400).end();
-        return;
-    }
+    if (game === undefined)
+        return response(res, 404, `no such game: ${req.params.gameId}`);
+
+    if (game.isGameOver)
+        return response(res, 400, `game ${req.params.gameId} is over`);
 
     const cookieJar = CookieJar.from(req);
 
-    if (cookieJar.email !== game.turnPlayer!.email) {
-        res.statusMessage = `nope, it"s ${game.turnPlayer!.name}"s turn`;
-        res.status(403).end();
-        return;
-    }
+    if (cookieJar.email !== game.turnPlayer!.email)
+        return response(res, 403, `nope, you're not ${game.turnPlayer!.name}`);
 
     try {
         const board = new Board();
@@ -70,7 +132,7 @@ router.post("/id/:gameId/move/:move", async (req: Request, res: Response) => {
         moves.push(req.params.move);
         board.makeMoves(moves);
 
-        // If `makeMoves(...)` didn"t throw an exception, it was a valid move
+        // If `makeMoves(...)` didn't throw an exception, it was a valid move
         game.setMoves(moves);
 
         if (board.isCheckmate(board.getTurn())) {
@@ -79,6 +141,8 @@ router.post("/id/:gameId/move/:move", async (req: Request, res: Response) => {
         }
 
         gameRepo.save(game!);
+        await userRepo.save(game.redPlayer!);
+        await userRepo.save(game.blackPlayer!);
 
         res.status(200).end();
     } catch (e) {

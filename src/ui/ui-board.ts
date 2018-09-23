@@ -29,18 +29,26 @@ export class UiBoard {
     }
 
     proposeDraw() {
-        console.log('~> proposeDraw...');
+        fetch(`${this.gameId}/propose-draw`, { method: "POST", credentials: "same-origin" })
+            .then((response: Response) => {
+                console.log('OK');
+            })
+            .catch(e => {
+                console.log('draw :: backend says no...', e);
+            });
     }
 
     forfeitGame() {
-        console.log('~> forfeitGame...');
+        fetch(`${this.gameId}/forfeit`, { method: "POST", credentials: "same-origin" })
+            .then((response: Response) => {
+                console.log('OK');
+            })
+            .catch(e => {
+                console.log('forfeit :: backend says no...', e);
+            });
     }
 
     private click(uiSquare: UiSquare) {
-
-        // if (this.replayMode) {
-        //     return;
-        // }
 
         if (!uiSquare.isOccupied() && this.selectedSquare === undefined) {
             return;
