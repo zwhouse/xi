@@ -59,6 +59,8 @@ export class UiBoard {
             return;
         }
 
+        this.lastMove(false);
+
         if (this.selectedSquare === uiSquare) {
             this.possibleMoves.every(x => x.paint());
             this.possibleMoves = [];
@@ -157,8 +159,18 @@ export class UiBoard {
         }
 
         this.insert(this.boardDiv, this.createRowDiv(cellDimension, UiBoard.red, "", "9", "8", "7", "6", "5", "4", "3", "2", "1", ""));
+        this.lastMove(true);
 
         this.checkState();
+    }
+
+    private lastMove(highlight: boolean) {
+        if (this.board.moves.length > 0) {
+            const lastMove = this.board.moves[this.board.moves.length - 1];
+            this.possibleMoves.push(this.squares[lastMove!.from.y][lastMove!.from.x]);
+            this.possibleMoves.push(this.squares[lastMove!.to.y][lastMove!.to.x]);
+            this.possibleMoves.every(x => highlight ? x.highlight() : x.paint());
+        }
     }
 
     private createRowDiv(cellDimension: number, textColor: string = UiBoard.black, ...childDivs: string[]) {

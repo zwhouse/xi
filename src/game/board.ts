@@ -25,8 +25,8 @@ export class Board {
          R H E A G A E H R`;
 
     private readonly grid: Square[][] = [];
-    private readonly moves: Move[] = [];
-    private readonly capturedPieces: { [color: string]: Piece[] } = { "red": [], "black": [] };
+    readonly moves: Move[] = [];
+    readonly capturedPieces: { [color: string]: Piece[] } = { "red": [], "black": [] };
 
     constructor(state?: string) {
         this.init(state || Board.beginState);
