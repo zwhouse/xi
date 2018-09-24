@@ -24,12 +24,12 @@ router.post("/login", async (req: Request, res: Response) => {
     const user = await repo.findByUsername(req.body.email);
 
     if (user === undefined || !(await repo.correctPassword(user, req.body.password))) {
-        res.render("user/login", { "error": "Oops, check again please!", "data": { "email": req.body.email }});
+        res.render("user/login", { "error": "Oops, check email + password again please!", data: { email: req.body.email }});
         return;
     }
 
     if (!user.confirmedEmail) {
-        res.render("user/login", { "error": "Please confirm your email address first", "data": { "email": req.body.email }});
+        res.render("user/login", { "error": "Please confirm your email address first", data: { email: req.body.email }});
         return;
     }
 
@@ -57,10 +57,10 @@ router.post("/register", [
     ], async (req: Request, res: Response) => {
 
     const errorArray = validationResult(req).array();
-    const data = { "name": req.body.name, "email": req.body.email };
+    const data = { name: req.body.name, email: req.body.email };
 
     if (errorArray.length > 0)
-        return render(res, "user/register", { "errors": arrayToObject(errorArray, "param"), "data": data });
+        return render(res, "user/register", { errors: arrayToObject(errorArray, "param"), data: data });
 
     const userRepo = create(UserRepository);
     const user = await userRepo.createAndSave(req.body.name, req.body.email, req.body.password).catch(e => console.log("error:", e));
@@ -92,7 +92,7 @@ router.get("/confirm", async (req: Request, res: Response) => {
     user.confirmedEmail = true;
     await repo.save(user);
 
-    res.render("user/login", { "info": "confirmation successful, please login", "data": { "email": user.email }});
+    res.render("user/login", { "info": "confirmation successful, please login", data: { email: user.email }});
 });
 
 router.get("/reset-request", (req: Request, res: Response) => {
@@ -114,39 +114,41 @@ router.post("/reset-request", async (req: Request, res: Response) => {
 });
 
 router.get("/reset", (req: Request, res: Response) => {
-    if (req.query.code === undefined) {
-        res.send("No no no...");
-        return;
+    if (!req.query.code === undefined) {
+        return render(res, "error/hacker");
     }
-    res.render("user/reset", { "code": decodeURIComponent(req.query.code) });
+    res.render("user/reset", { code: decodeURIComponent(req.query.code) });
 });
 
 router.post("/reset", [
         check("password", "too easy to guess").isLength({ min: 6 })
     ], async (req: Request, res: Response) => {
 
+    const errorArray = validationResult(req).array();
+
+    if (errorArray.length > 0)
+        return render(res, "user/reset", { errors: arrayToObject(errorArray, "param") });
+
     const decoded = decodeURIComponent(req.body.code);
     const decrypted = CryptoUtils.decrypt(decoded, secret);
     const newPassword = req.body.password;
 
     if (decrypted === undefined) {
-        res.send("No no no...");
-        return;
+        return render(res, "error/hacker");
     }
 
     const repo = create(UserRepository);
     const user = await repo.findByUsername(decrypted);
 
     if (user === undefined) {
-        res.send("No no no...");
-        return;
+        return render(res, "error/hacker");
     }
 
     user.passwordHash = await repo.hashedPassword(newPassword);
     user.confirmedEmail = true;
     await repo.save(user);
 
-    res.render("user/login", { "data": { "email": user.email }});
+    res.render("user/login", { data: { email: user.email }, info: "password reset, please log in" });
 });
 
 export const UserController: Router = router;

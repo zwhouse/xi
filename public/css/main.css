@@ -29,10 +29,29 @@ body {
     padding-left: 5px;
 }
 
-body .table {
+body .table.moves {
     width: 0;
 }
 
-body .table td {
+body .table.moves td {
     border-top: none;
+}
+
+form {
+    margin-top: 70px;
+    margin-bottom: 20px;
+}
+
+img.family-guy {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.alert {
+    position: absolute;
+    z-index: 1;
+}
+
+.warning {
+    color: darkorange;
 }
