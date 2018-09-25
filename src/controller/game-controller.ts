@@ -8,7 +8,7 @@ import {Board} from "../game/board";
 import {Guid} from "guid-typescript";
 import {MailService} from "../service/mail-service";
 import {response} from "../util/response-utils";
-import {drawProposal, moveNotification} from "../template/mail";
+import {drawProposal, forfeitNotification, moveNotification} from "../template/mail";
 
 const mailService = new MailService();
 const router: Router = Router();
@@ -40,6 +40,9 @@ router.post("/id/:gameId/forfeit", async (req: Request, res: Response) => {
     await gameRepo.save(game);
     await userRepo.save(game.redPlayer!);
     await userRepo.save(game.blackPlayer!);
+
+    const opponent = game.getOpponentOf(user!);
+    mailService.send(opponent.email!, `${user!.name} forfeited game ${game.id}`, forfeitNotification(req, game));
 
     res.status(200).end();
 });
