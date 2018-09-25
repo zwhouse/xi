@@ -17,10 +17,12 @@
     <div class="row">
         <div class="col">
             <div id="board" style="width: 420px;"></div>
-            {{#unless game.isGameOver}}
+            {{#if game.isGameOver}}
+                <p class="small">Game over: {{#if game.winner}}{{game.winner.name}} won{{else}}draw{{/if}} (red: {{game.pointsRed}}, black: {{game.pointsBlack}})</p>
+            {{else}}
                 <button id="drawButton" type="button" class="btn btn-outline-warning btn-sm" data-toggle="confirmation" data-singleton="true">draw</button>
                 <button id="forfeitButton" type="button" class="btn btn-outline-danger btn-sm" data-toggle="confirmation" data-singleton="true">forfeit</button>
-            {{/unless}}
+            {{/if}}
         </div>
         <div class="col">
             <table id="movesTable" class="table moves table-sm">
