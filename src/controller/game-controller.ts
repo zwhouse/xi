@@ -8,7 +8,7 @@ import {Board} from "../game/board";
 import {Guid} from "guid-typescript";
 import {MailService} from "../service/mail-service";
 import {response} from "../util/response-utils";
-import {drawProposal, forfeitNotification, moveNotification} from "../template/mail";
+import {drawProposal, forfeitNotification, inviteUser, moveNotification} from "../template/mail";
 
 const mailService = new MailService();
 const router: Router = Router();
@@ -27,9 +27,6 @@ router.post("/id/:gameId/forfeit", async (req: Request, res: Response) => {
 
     if (game.isGameOver)
         return response(res, 400, `game ${req.params.gameId} is over`);
-
-    if (!game.isAccepted)
-        return response(res, 400, `game ${req.params.gameId} hasn't started yet`);
 
     const user = await userRepo.findByUsername(CookieJar.from(req).email);
 
@@ -54,7 +51,7 @@ router.post("/id/:gameId/propose-draw", async (req: Request, res: Response) => {
     const userRepo = create(UserRepository);
     const game = await gameRepo.getById(parseInt(req.params.gameId));
 
-    if (game === undefined || game.isGameOver || !game.isAccepted || game.drawProposalCode !== "") {
+    if (game === undefined || game.isGameOver || game.drawProposalCode !== "") {
         res.statusMessage = "NOPE, TODO 2";
         res.status(400).end();
         return;
@@ -96,9 +93,6 @@ router.get("/id/:gameId/accept-draw", async (req: Request, res: Response) => {
 
     if (game.isGameOver)
         return response(res, 400, `game ${req.params.gameId} is over`);
-
-    if (!game.isAccepted)
-        return response(res, 400, `game ${req.params.gameId} hasn't started yet`);
 
     game.draw();
     await gameRepo.save(game);
@@ -183,8 +177,18 @@ router.post("/new", async (req: Request, res: Response) => {
     const opponentEmail = req.body.opponent;
     const initiator = await userRepo.findByUsername(cookieJar.email);
     const opponent = await userRepo.findByUsername(opponentEmail);
+
+    if (opponent === undefined) {
+        const opponents = await userRepo.getAllBut(cookieJar.email);
+        res.render("game/new", { opponents: opponents, error: "Please choose an opponent" });
+        return;
+    }
+
     const game = await gameRepo.createAndSave(initiator!, opponent!, req.body.color === "red");
-    res.send(game);
+
+    mailService.send(opponent.email!, `A new Xiangqi challenge!`, inviteUser(req, initiator!, game));
+
+    res.render("game/new-success", { opponentName: opponent.name, canMakeMove: req.body.color === "red", gameId: game.id });
 });
 
 export const GameController: Router = router;

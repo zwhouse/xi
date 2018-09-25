@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Xi - Home</title>
+    <title>Xi - new game</title>
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/main.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -11,29 +11,15 @@
 </head>
 <body>
 <div class="container">
-
-    <div class="col-sm-8">
-        <div class="list-group">
-
-            <div id="logo">
-                <img src="/svg/{{logo}}.svg">
-            </div>
-
-            {{#if loggedIn}}
-                <a href="/game/list" class="menu list-group-item list-group-item-action display-4">all games</a>
-                <a href="/game/new" class="menu list-group-item list-group-item-action display-4">new game</a>
-                <a href="/user/rankings" class="menu list-group-item list-group-item-action display-4">rankings</a>
-            {{else}}
-                <a href="/user/login" class="menu list-group-item list-group-item-action display-4">login</a>
-                <a href="/user/register" class="menu list-group-item list-group-item-action display-4">register</a>
-            {{/if}}
-
-        </div>
+    <div class="row">
+        <img class="family-guy" src="/img/chris.png">
     </div>
-
-    <div class="col-sm-4">
+    <div class="row">
+        <p>
+            {{opponentName}} is invited by email, {{#if canMakeMove}}you can make a first move{{else}}
+            wait for {{opponentName}} to make a first move{{/if}}: <a href="/game/id/{{gameId}}">game {{gameId}}</a>
+        </p>
     </div>
-
 </div>
 </body>
 </html>

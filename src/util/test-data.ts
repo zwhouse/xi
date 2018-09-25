@@ -1,4 +1,4 @@
-import {Connection, createConnection, getCustomRepository} from "typeorm";
+import {createConnection, getCustomRepository} from "typeorm";
 import {User} from "../db/user";
 import {Game} from "../db/game";
 import {UserRepository} from "../repository/user-repository";
@@ -24,7 +24,7 @@ async function createGames(users: User[]): Promise<Game[]> {
     const games: Game[] = [];
 
     for (let i = 1; i < users.length; i++) {
-        const game = await repo.createAndSave(users[0], users[i], i % 2 === 1, i % 2 === 1);
+        const game = await repo.createAndSave(users[0], users[i], i % 2 === 1);
         games.push(game);
     }
 

@@ -1,6 +1,5 @@
 import {EntityRepository, Repository, EntityManager, createConnection, Not, Equal} from "typeorm";
 import {User} from "../db/user";
-import * as bcrypt from "bcrypt";
 import {Game} from "../db/game";
 
 @EntityRepository()
@@ -23,8 +22,8 @@ export class GameRepository {
             .getMany();
     }
 
-    createAndSave(initiator: User, opponent: User, ownColorIsRed: boolean, isAccepted: boolean = false): Promise<Game> {
-        const game = new Game(initiator, opponent, ownColorIsRed, isAccepted);
+    createAndSave(initiator: User, opponent: User, ownColorIsRed: boolean): Promise<Game> {
+        const game = new Game(initiator, opponent, ownColorIsRed);
         return this.manager.save<Game>(game);
     }
 

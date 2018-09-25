@@ -21,7 +21,6 @@
                     <th scope="col"></th>
                     <th scope="col">black</th>
                     <th scope="col"></th>
-                    <th scope="col">started</th>
                     <th scope="col">finished</th>
                     <th scope="col"></th>
                 </tr>
@@ -32,7 +31,6 @@
                         <td>{{#if this.isGameOver}}{{this.pointsRed}}{{/if}}</td>
                         <td>{{this.blackPlayer.name}}</td>
                         <td>{{#if this.isGameOver}}{{this.pointsBlack}}{{/if}}</td>
-                        <td>{{#if this.isAccepted}}&#x2713;{{/if}}</td>
                         <td>{{#if this.isGameOver}}&#x2713;{{/if}}</td>
                         <td scope="col"><a href="/game/id/{{this.id}}">{{this.id}}</a></td>
                     </tr>

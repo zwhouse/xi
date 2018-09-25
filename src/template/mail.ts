@@ -1,5 +1,6 @@
 import {Request} from "express";
 import {Game} from "../db/game";
+import {User} from "../db/user";
 
 export function resetPassword(req: Request, encrypted: string): string {
     return `<p>Reset your password <a href="${req.protocol}://${req.get("host")}/user/reset?code=${encodeURIComponent(encrypted)}">here</a>.</p>`;
@@ -29,4 +30,11 @@ export function forfeitNotification(req: Request, game: Game): string {
     const gameLink = `${req.protocol}://${req.get("host")}/game/id/${game.id}`;
 
     return `<p>Congrats, you won: ${game.turnPlayer!.name} forfeited <a href="${gameLink}">game ${game.id}</a>.</p>`;
+}
+
+export function inviteUser(req: Request, inviter: User, game: Game): string {
+
+    const gameLink = `${req.protocol}://${req.get("host")}/game/id/${game.id}`;
+
+    return `<p>Hi, ${inviter.name} invited you to play a game Xiangqi: <a href="${gameLink}">game ${game.id}</a>.</p>`;
 }

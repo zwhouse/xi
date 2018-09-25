@@ -37,9 +37,6 @@ export class Game {
     winner?: User;
 
     @Column()
-    isAccepted: boolean = false;
-
-    @Column()
     isGameOver: boolean = false;
 
     @Column()
@@ -51,11 +48,10 @@ export class Game {
     @Column()
     pointsBlack: number = 0;
 
-    constructor(initiator: User, opponent: User, initiatorWithRed: boolean, isAccepted: boolean = false) {
+    constructor(initiator: User, opponent: User, initiatorWithRed: boolean) {
         this.redPlayer = initiatorWithRed ? initiator : opponent;
         this.blackPlayer = initiatorWithRed ? opponent : initiator;
         this.turnPlayer = initiatorWithRed ? initiator : opponent;
-        this.isAccepted = isAccepted;
     }
 
     draw() {

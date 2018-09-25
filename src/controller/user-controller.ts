@@ -37,7 +37,7 @@ router.post("/login", async (req: Request, res: Response) => {
     const cookieJar = CookieJar.from(req);
     cookieJar.email = user.email!;
 
-    let redirectUrl = "/game/list";
+    let redirectUrl = "/";
 
     if (cookieJar.redirectTo !== "") {
         redirectUrl = cookieJar.redirectTo;
