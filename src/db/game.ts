@@ -113,8 +113,10 @@ export class Game {
         return user.id === this.redPlayer!.id ? this.blackPlayer! : this.redPlayer!;
     }
 
-    setMoves(moves: string[]) {
-        this.movesJson = JSON.stringify(moves);
+    move(move: string) {
+        const tempMoves = JSON.parse(this.movesJson) as string[];
+        tempMoves.push(move);
+        this.movesJson = JSON.stringify(tempMoves);
         this.turnPlayer = this.turnPlayer!.id === this.redPlayer!.id ? this.blackPlayer : this.redPlayer;
         this.drawProposalCode = "";
     }

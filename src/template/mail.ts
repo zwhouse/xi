@@ -17,3 +17,10 @@ export function confirmationRegister(req: Request, encrypted: string) {
     return `<h1>Welcome to Xi!</h1>
             <p>Click <a href="${req.protocol}://${req.get("host")}/user/confirm?code=${encodeURIComponent(encrypted)}">here</a> to confirm your email address</p>`;
 }
+
+export function moveNotification(req: Request, game: Game): string {
+
+    const gameLink = `${req.protocol}://${req.get("host")}/game/id/${game.id}`;
+
+    return `<p>${game.getOpponentOf(game.turnPlayer!).name} made a move in <a href="${gameLink}">game ${game.id}</a>.</p>`;
+}

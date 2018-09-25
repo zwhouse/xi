@@ -8,7 +8,7 @@ import {Board} from "../game/board";
 import {Guid} from "guid-typescript";
 import {MailService} from "../service/mail-service";
 import {response} from "../util/response-utils";
-import {drawProposal} from "../template/mail";
+import {drawProposal, moveNotification} from "../template/mail";
 
 const mailService = new MailService();
 const router: Router = Router();
@@ -129,7 +129,7 @@ router.post("/id/:gameId/move/:move", async (req: Request, res: Response) => {
         board.makeMoves(moves);
 
         // If `makeMoves(...)` didn't throw an exception, it was a valid move
-        game.setMoves(moves);
+        game.move(req.params.move);
 
         if (board.isCheckmate(board.getTurn())) {
             game.end(board.getTurn());
@@ -139,6 +139,11 @@ router.post("/id/:gameId/move/:move", async (req: Request, res: Response) => {
         gameRepo.save(game!);
         await userRepo.save(game.redPlayer!);
         await userRepo.save(game.blackPlayer!);
+
+        if (process.env.SEND_MAIL_AFTER_MOVE === "true") {
+            const subject = `${game.getOpponentOf(game.turnPlayer!).name} made a move in game ${game.id}`;
+            mailService.send(game.turnPlayer!.email!, subject, moveNotification(req, game));
+        }
 
         res.status(200).end();
     } catch (e) {
