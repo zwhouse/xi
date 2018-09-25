@@ -12,26 +12,37 @@
 <body>
 <div class="container">
     <div class="row">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th scope="col">red</th>
-                <th scope="col">black</th>
-                <th scope="col">started</th>
-                <th scope="col">finished</th>
-                <th scope="col"></th>
-            </tr>
-            </thead>
-            {{#each games}}
+
+        <div class="col-sm-8">
+            <table class="table table-striped">
+                <thead>
                 <tr>
-                    <td>{{this.redPlayer.name}}{{#if this.isGameOver}} ({{this.pointsRed}}){{/if}}</td>
-                    <td>{{this.blackPlayer.name}}{{#if this.isGameOver}} ({{this.pointsBlack}}){{/if}}</td>
-                    <td>{{#if this.isAccepted}}&#x2713;{{/if}}</td>
-                    <td>{{#if this.isGameOver}}&#x2713;{{/if}}</td>
-                    <td scope="col"><a href="/game/id/{{this.id}}">{{this.id}}</a></td>
+                    <th scope="col">red</th>
+                    <th scope="col"></th>
+                    <th scope="col">black</th>
+                    <th scope="col"></th>
+                    <th scope="col">started</th>
+                    <th scope="col">finished</th>
+                    <th scope="col"></th>
                 </tr>
-            {{/each}}
-        </table>
+                </thead>
+                {{#each games}}
+                    <tr>
+                        <td>{{this.redPlayer.name}}</td>
+                        <td>{{#if this.isGameOver}}{{this.pointsRed}}{{/if}}</td>
+                        <td>{{this.blackPlayer.name}}</td>
+                        <td>{{#if this.isGameOver}}{{this.pointsBlack}}{{/if}}</td>
+                        <td>{{#if this.isAccepted}}&#x2713;{{/if}}</td>
+                        <td>{{#if this.isGameOver}}&#x2713;{{/if}}</td>
+                        <td scope="col"><a href="/game/id/{{this.id}}">{{this.id}}</a></td>
+                    </tr>
+                {{/each}}
+            </table>
+        </div>
+
+        <div class="col-sm-4">
+        </div>
+
     </div>
 </div>
 </body>

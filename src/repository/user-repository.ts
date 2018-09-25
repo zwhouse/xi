@@ -1,6 +1,7 @@
 import {EntityRepository, Repository, EntityManager, createConnection, Not, Equal} from "typeorm";
 import {User} from "../db/user";
 import * as bcrypt from "bcrypt";
+import {Game} from "../db/game";
 
 @EntityRepository()
 export class UserRepository {
@@ -16,6 +17,14 @@ export class UserRepository {
 
     async getAllBut(email: string): Promise<User[]> {
         return (await this.manager.find(User)).filter(x => x.email !== email);
+    }
+
+    getAll(desc: boolean = true): Promise<User[]> {
+        return this.manager
+            .getRepository(User)
+            .createQueryBuilder("user")
+            .orderBy("user.rating", desc ? "DESC" : "ASC")
+            .getMany();
     }
 
     findByUsername(email: string): Promise<User | undefined> {

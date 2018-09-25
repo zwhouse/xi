@@ -14,7 +14,7 @@ export function drawProposal(req: Request, game: Game): string {
 }
 
 export function confirmationRegister(req: Request, encrypted: string) {
-    return `<h1>Welcome to Xi!</h1><p>Click <a href="${req.protocol}://${req.get("host")}/user/confirm?code=${encodeURIComponent(encrypted)}">here</a> to confirm your email address</p>`;
+    return `<p>Welcome to Xi! Click <a href="${req.protocol}://${req.get("host")}/user/confirm?code=${encodeURIComponent(encrypted)}">here</a> to confirm your email address</p>`;
 }
 
 export function moveNotification(req: Request, game: Game): string {
@@ -28,5 +28,5 @@ export function forfeitNotification(req: Request, game: Game): string {
 
     const gameLink = `${req.protocol}://${req.get("host")}/game/id/${game.id}`;
 
-    return `Congrats, you won: <p>${game.turnPlayer!.name} forfeited <a href="${gameLink}">game ${game.id}</a>.</p>`;
+    return `<p>Congrats, you won: ${game.turnPlayer!.name} forfeited <a href="${gameLink}">game ${game.id}</a>.</p>`;
 }

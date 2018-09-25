@@ -2,6 +2,13 @@ body {
     padding-top: 20px;
 }
 
+#logo {
+    width: 140px;
+    display: block;
+    margin: 0 auto;
+    padding-bottom: 20px;
+}
+
 #board {
     padding-bottom: 20px;
 }
@@ -13,6 +20,10 @@ body {
 #movesTable td {
     font-family: sans-serif;
     font-size: 12px;
+}
+
+.menu {
+    text-align: center;
 }
 
 .red-move {

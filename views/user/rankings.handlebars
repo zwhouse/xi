@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Xi - Home</title>
+    <title>Xi - rankings</title>
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/main.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -11,28 +11,33 @@
 </head>
 <body>
 <div class="container">
+    <div class="row">
 
-    <div class="col-sm-8">
-        <div class="list-group">
-
-            <div id="logo">
-                <img src="/svg/{{logo}}.svg">
-            </div>
-
-            {{#if loggedIn}}
-                <a href="/game/list" class="menu list-group-item list-group-item-action display-4">all games</a>
-                <a href="/game/new" class="menu list-group-item list-group-item-action display-4">new game</a>
-                <a href="/user/rankings" class="menu list-group-item list-group-item-action display-4">rankings</a>
-            {{else}}
-                <a href="/user/register" class="menu list-group-item list-group-item-action display-4">register</a>
-            {{/if}}
-
+        <div class="col-sm-8">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">name</th>
+                    <th scope="col">rating</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each users.userRankings}}
+                    <tr>
+                        <td>{{this.ranking}}</td>
+                        <td>{{this.name}}</td>
+                        <td>{{this.rating}}</td>
+                    </tr>
+                {{/each}}
+                </tbody>
+            </table>
         </div>
-    </div>
 
-    <div class="col-sm-4">
-    </div>
+        <div class="col-sm-4">
+        </div>
 
+    </div>
 </div>
 </body>
 </html>

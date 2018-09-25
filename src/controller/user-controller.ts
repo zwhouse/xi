@@ -9,6 +9,7 @@ import {secret} from "../server";
 import {CookieJar} from "../middleware/cookie-jar";
 import {render} from "../util/response-utils";
 import {confirmationRegister, resetPassword} from "../template/mail";
+import {UserRankingModel} from "../viewmodel/user-ranking-model";
 
 const mailService = new MailService();
 const router: Router = Router();
@@ -149,6 +150,14 @@ router.post("/reset", [
     await repo.save(user);
 
     res.render("user/login", { data: { email: user.email }, info: "password reset, please log in" });
+});
+
+router.get("/rankings", async (req: Request, res: Response) => {
+
+    const repo = create(UserRepository);
+    const users = await repo.getAll();
+
+    res.render("user/rankings", { users: new UserRankingModel(users) });
 });
 
 export const UserController: Router = router;
