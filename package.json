@@ -10,7 +10,7 @@
   "scripts": {
     "test": "mocha -r ts-node/register tests/**/*.ts",
     "build": "rm -rf ./dist && tsc && ./node_modules/.bin/webpack",
-    "postinstall": "echo $DATABASE_URL && typeorm migration:run",
+    "postinstall": "typeorm migration:run",
     "start": "node dist/src/server.js",
     "mig:gen": "rm -rf ./dist/src/migration && tsc && typeorm migration:generate -n ",
     "mig:run": "tsc && typeorm migration:run",
