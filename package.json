@@ -4,6 +4,9 @@
   "description": "Xiangqi",
   "main": "server.js",
   "repository": "https://github.com/bkiers/xi",
+  "engines": {
+    "node": "8.10.0"
+  },
   "scripts": {
     "test": "mocha -r ts-node/register tests/**/*.ts",
     "build": "rm -rf ./dist && tsc && ./node_modules/.bin/webpack",
