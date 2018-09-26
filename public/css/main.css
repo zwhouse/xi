@@ -22,6 +22,14 @@ body {
     font-size: 12px;
 }
 
+#message {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin-bottom: 0;
+}
+
 .menu {
     text-align: center;
 }

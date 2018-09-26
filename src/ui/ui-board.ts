@@ -82,6 +82,7 @@ export class UiBoard {
         fetch(`${this.gameId}/move/${move.moveStrSimple}`, { method: "POST", credentials: "same-origin" })
             .then((response: Response) => {
                 if (!response.ok) {
+                    UiBoard.message(response.statusText);
                     return;
                 }
                 try {
@@ -95,8 +96,9 @@ export class UiBoard {
                 } catch (e) {
                     UiBoard.message(`Oops: ${e}`);
                 }
-            }).catch(e => {
-                console.log('backend says no...', e);
+            })
+            .catch(e => {
+                UiBoard.message(`Oops: ${e}`);
             });
     }
 
@@ -253,6 +255,24 @@ export class UiBoard {
     }
 
     private static message(message: string) {
-        console.log('message:', message);
+        const div = document.createElement("div");
+        div.id = "message";
+        div.className = "alert alert-danger alert-dismissible";
+        const a = document.createElement("a");
+        a.className = "close";
+        a.setAttribute("data-dismiss", "alert");
+        a.setAttribute("aria-label", "close");
+        a.innerHTML = "&times;";
+        const span = document.createElement("span");
+        span.innerText = message;
+        div.appendChild(a);
+        div.appendChild(span);
+        document.body.appendChild(div);
+
+        setTimeout(() => {
+            if (document.body.contains(div)) {
+                document.body.removeChild(div);
+            }
+        }, 5000);
     }
 }
