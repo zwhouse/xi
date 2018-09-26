@@ -54,7 +54,7 @@ createConnection({
 
     app.listen(port, () => {
         console.log(`Listening at http://localhost:${port}/`);
-        keepAlive();
+        //keepAlive();
     });
 }).catch(error => console.log(error));
 
