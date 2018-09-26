@@ -31,5 +31,6 @@ else
            \"logging\": false
          }" > "ormconfig-production.json";
 
+    tsc
     typeorm migration:run --config ormconfig-production
 fi
