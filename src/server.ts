@@ -13,7 +13,10 @@ import {Game} from "./db/game";
 import {DbConfig} from "./util/db-config";
 import {HomeController} from "./controller/home-controller";
 import {ApiController} from "./controller/api-controller";
-import {keepAlive} from "./util/keep-alive";
+
+if (process.env.NEW_RELIC_KEY) {
+    require('newrelic');
+}
 
 const app: express.Application = express();
 const hbs: Exphbs = handlebars.create({ /* config */ });
@@ -54,8 +57,5 @@ createConnection({
 
     app.listen(port, () => {
         console.log(`Listening at http://localhost:${port}/`);
-        //keepAlive();
     });
 }).catch(error => console.log(error));
-
-// TODO: http://bootstrap-confirmation.js.org
