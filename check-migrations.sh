@@ -25,6 +25,9 @@ else
            \"cli\": {
              \"migrationsDir\": \"src/migration\"
            },
+           \"extra\": {
+             \"ssl\": true
+           },
            \"logging\": false
          }" > "ormconfig-production.json";
 
