@@ -12,6 +12,7 @@ import {User} from "./db/user";
 import {Game} from "./db/game";
 import {DbConfig} from "./util/db-config";
 import {HomeController} from "./controller/home-controller";
+import {ApiController} from "./controller/api-controller";
 
 const app: express.Application = express();
 const hbs: Exphbs = handlebars.create({ /* config */ });
@@ -26,6 +27,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(validator());
 app.use(cookieParser());
 app.use(express.static('public'));
+app.use(bodyParser.json());
 
 const dbConfig = new DbConfig(process.env.DATABASE_URL as string);
 
@@ -46,6 +48,7 @@ createConnection({
 
     app.use('/user', UserController);
     app.use('/game', GameController);
+    app.use('/api', ApiController);
     app.use('/', HomeController);
 
     app.listen(port, () => {
