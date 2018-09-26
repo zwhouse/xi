@@ -7,6 +7,6 @@ export class SqlRepository {
     }
 
     execute(query: string): Promise<any> {
-        return this.manager.query(query);
+        return this.manager.query(query).catch(reason => reason);
     }
 }
