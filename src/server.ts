@@ -14,10 +14,6 @@ import {DbConfig} from "./util/db-config";
 import {HomeController} from "./controller/home-controller";
 import {ApiController} from "./controller/api-controller";
 
-if (process.env.NEW_RELIC_KEY) {
-    require('newrelic');
-}
-
 const app: express.Application = express();
 const hbs: Exphbs = handlebars.create({ /* config */ });
 
