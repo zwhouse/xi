@@ -25,11 +25,11 @@ export function moveNotification(req: Request, game: Game): string {
     return `<p>${game.getOpponentOf(game.turnPlayer!).name} made a move in <a href="${gameLink}">game ${game.id}</a>.</p>`;
 }
 
-export function forfeitNotification(req: Request, game: Game): string {
+export function forfeitNotification(req: Request, game: Game, user: User): string {
 
     const gameLink = `${req.protocol}://${req.get("host")}/game/id/${game.id}`;
 
-    return `<p>Congrats, you won: ${game.turnPlayer!.name} forfeited <a href="${gameLink}">game ${game.id}</a>.</p>`;
+    return `<p>Congrats, you won: ${user.name} forfeited <a href="${gameLink}">game ${game.id}</a>.</p>`;
 }
 
 export function inviteUser(req: Request, inviter: User, game: Game): string {

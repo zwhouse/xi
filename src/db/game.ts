@@ -1,6 +1,5 @@
 import {Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {User} from "./user";
-import {Color} from "../game/color";
 import {Result} from "../game/result";
 
 @Entity()
@@ -48,57 +47,42 @@ export class Game {
     @Column()
     pointsBlack: number = 0;
 
-    constructor(initiator: User, opponent: User, initiatorWithRed: boolean) {
+    constructor(initiator: User, opponent: User, initiatorWithRed: boolean = true) {
         this.redPlayer = initiatorWithRed ? initiator : opponent;
         this.blackPlayer = initiatorWithRed ? opponent : initiator;
         this.turnPlayer = initiatorWithRed ? initiator : opponent;
     }
 
     draw() {
-        this.isGameOver = true;
-        this.winner = undefined;
-        this.drawProposalCode = "";
-
-        this.pointsRed = this.redPlayer!.pointsAfter(Result.Draw, this.blackPlayer!);
-        this.pointsBlack = this.blackPlayer!.pointsAfter(Result.Draw, this.redPlayer!);
-
-        this.redPlayer!.rating += this.pointsRed;
-        this.blackPlayer!.rating += this.pointsBlack;
+        this.endGame(undefined);
     }
 
     forfeit(user: User) {
-        this.isGameOver = true;
-        this.drawProposalCode = "";
-
-        if (user.id === this.redPlayer!.id) {
-            this.winner = this.blackPlayer;
-            this.pointsBlack = this.blackPlayer!.pointsAfter(Result.Win, this.redPlayer!);
-            this.pointsRed = -this.pointsBlack;
-        }
-        else {
-            this.winner = this.redPlayer;
-            this.pointsRed = this.redPlayer!.pointsAfter(Result.Win, this.blackPlayer!);
-            this.pointsBlack = -this.pointsRed;
-        }
-
-        this.redPlayer!.rating += this.pointsRed;
-        this.blackPlayer!.rating += this.pointsBlack;
+        this.endGame(user.id === this.redPlayer!.id ? this.blackPlayer : this.redPlayer);
     }
 
-    end(colorTurn: Color) {
+    checkmate() {
+        // If it's red's turn, black won
+        this.endGame(this.turnPlayer!.id === this.redPlayer!.id ? this.blackPlayer : this.redPlayer);
+    }
+
+    private endGame(winner?: User) {
+
         this.isGameOver = true;
         this.drawProposalCode = "";
+        this.winner = winner;
 
-        if (colorTurn === Color.Red) {
-            // It's red's turn, so black won
-            this.winner = this.blackPlayer;
-            this.pointsBlack = this.blackPlayer!.pointsAfter(Result.Win, this.redPlayer!);
-            this.pointsRed = -this.pointsBlack;
+        if (winner === undefined) {
+            this.pointsRed = this.redPlayer!.pointsAfter(Result.Draw, this.blackPlayer!);
+            this.pointsBlack = this.blackPlayer!.pointsAfter(Result.Draw, this.redPlayer!);
         }
-        else {
-            this.winner = this.redPlayer;
+        else if (winner!.id === this.redPlayer!.id) {
             this.pointsRed = this.redPlayer!.pointsAfter(Result.Win, this.blackPlayer!);
             this.pointsBlack = -this.pointsRed;
+        }
+        else {
+            this.pointsBlack = this.blackPlayer!.pointsAfter(Result.Win, this.redPlayer!);
+            this.pointsRed = -this.pointsBlack;
         }
 
         this.redPlayer!.rating += this.pointsRed;

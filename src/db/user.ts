@@ -34,6 +34,7 @@ export class User {
 
     pointsAfter(result: Result, opponent: User, k: number = 25): number {
         const winChance = 1.0 / (1 + Math.pow(10, (opponent.rating - this.rating) / 400.0));
-        return Math.round((result - winChance) * k);
+        const points = (result - winChance) * k;
+        return Math.round(Math.abs(points)) * (points < 0 ? -1 : 1);
     }
 }

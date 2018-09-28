@@ -28,7 +28,7 @@ router.post("/id/:gameId/forfeit", async (req: Request, res: Response) => {
     if (game.isGameOver)
         return response(res, 400, `game ${req.params.gameId} is over`);
 
-    const user = await userRepo.findByUsername(CookieJar.from(req).email);
+    const user = await userRepo.findByUsername(CookieJar.from(req).email)!;
 
     if (user!.email !== game.redPlayer!.email && user!.email !== game.blackPlayer!.email)
         return response(res, 403, `only ${game.redPlayer!.name} and ${game.blackPlayer!.name} can forfeit`);
@@ -39,7 +39,7 @@ router.post("/id/:gameId/forfeit", async (req: Request, res: Response) => {
     await userRepo.save(game.blackPlayer!);
 
     const opponent = game.getOpponentOf(user!);
-    mailService.send(opponent.email!, `${user!.name} forfeited game ${game.id}`, forfeitNotification(req, game));
+    mailService.send(opponent.email!, `${user!.name} forfeited game ${game.id}`, forfeitNotification(req, game, user!));
 
     res.status(200).end();
 });
@@ -129,7 +129,7 @@ router.post("/id/:gameId/move/:move", async (req: Request, res: Response) => {
         game.move(req.params.move);
 
         if (board.isCheckmate(board.getTurn())) {
-            game.end(board.getTurn());
+            game.checkmate();
             res.statusMessage = `checkmate, winner: ${game.winner!.name}`;
         }
 

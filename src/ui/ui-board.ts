@@ -31,20 +31,30 @@ export class UiBoard {
     proposeDraw() {
         fetch(`${this.gameId}/propose-draw`, { method: "POST", credentials: "same-origin" })
             .then((response: Response) => {
-                console.log('OK');
+                if (!response.ok) {
+                    UiBoard.message(response.statusText);
+                    return;
+                }
+                UiBoard.message("Proposal sent!");
             })
             .catch(e => {
-                console.log('draw :: backend says no...', e);
+                UiBoard.message(`Oops: ${e}`);
+                console.log('Exception: ', e);
             });
     }
 
     forfeitGame() {
         fetch(`${this.gameId}/forfeit`, { method: "POST", credentials: "same-origin" })
             .then((response: Response) => {
-                console.log('OK');
+                if (!response.ok) {
+                    UiBoard.message(response.statusText);
+                    return;
+                }
+                location.reload();
             })
             .catch(e => {
-                console.log('forfeit :: backend says no...', e);
+                UiBoard.message(`Oops: ${e}`);
+                console.log('Exception: ', e);
             });
     }
 

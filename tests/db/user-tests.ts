@@ -7,6 +7,22 @@ describe("User", () => {
 
     describe("#pointsAfter", () => {
 
+        it("should return 13 points for a win of an equally rated player", () => {
+
+            const player1 = new User("A", "", "", true, 1200);
+            const player2 = new User("A", "", "", true, 1200);
+
+            expect(player1.pointsAfter(Result.Win, player2)).to.equal(13);
+        });
+
+        it("should return -13 points for a loss against an equally rated player", () => {
+
+            const player1 = new User("A", "", "", true, 1200);
+            const player2 = new User("A", "", "", true, 1200);
+
+            expect(player2.pointsAfter(Result.Loss, player1)).to.equal(-13);
+        });
+
         it("should return 6 points for a win of a higher rated player", () => {
 
             const player1 = new User("A", "", "", true, 1365);
