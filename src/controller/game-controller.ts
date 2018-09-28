@@ -9,6 +9,7 @@ import {Guid} from "guid-typescript";
 import {MailService} from "../service/mail-service";
 import {response} from "../util/response-utils";
 import {drawProposal, forfeitNotification, inviteUser, moveNotification} from "../template/mail";
+import {DrawProposal} from "../viewmodel/draw-proposal";
 
 const mailService = new MailService();
 const router: Router = Router();
@@ -51,22 +52,26 @@ router.post("/id/:gameId/propose-draw", async (req: Request, res: Response) => {
     const userRepo = create(UserRepository);
     const game = await gameRepo.getById(parseInt(req.params.gameId));
 
-    if (game === undefined || game.isGameOver || game.drawProposalCode !== "") {
-        res.statusMessage = "NOPE, TODO 2";
-        res.status(400).end();
-        return;
-    }
+    if (game === undefined)
+        return response(res, 404, `no such game: ${req.params.gameId}`);
+
+    if (game.isGameOver)
+        return response(res, 400, `game ${req.params.gameId} is over`);
+
+    if (game.drawProposalCode !== "")
+        return response(res, 400, `there is already a draw proposal pending`);
 
     const user = await userRepo.findByUsername(CookieJar.from(req).email);
 
     if (user!.email !== game.redPlayer!.email && user!.email !== game.blackPlayer!.email)
         return response(res, 403, `only ${game.redPlayer!.name} and ${game.blackPlayer!.name} can propose a draw`);
 
-    game.drawProposalCode = Guid.create().toString();
-
     const opponent = game.getOpponentOf(user!);
+    const proposal = new DrawProposal(opponent.email!, Guid.create().toString());
 
-    await mailService.send(opponent.email!, `${user!.name} proposes a draw for game ${game.id}`, drawProposal(req, game));
+    game.drawProposalCode = proposal.code;
+
+    await mailService.send(opponent.email!, `${user!.name} proposes a draw for game ${game.id}`, drawProposal(req, game, proposal));
     await gameRepo.save(game);
 
     res.status(200).end();
@@ -77,22 +82,19 @@ router.get("/id/:gameId/accept-draw", async (req: Request, res: Response) => {
     const gameRepo = create(GameRepository);
     const userRepo = create(UserRepository);
     const game = await gameRepo.getById(parseInt(req.params.gameId));
-    const code = req.query.code;
-
-    if (code === null || game === undefined || game.isGameOver || game.drawProposalCode !== code) {
-        res.statusMessage = "NOPE, TODO 1";
-        res.status(400).end();
-        return;
-    }
-
-    if (!code)
-        return response(res, 400, `invalid code: ${code}`);
 
     if (game === undefined)
         return response(res, 404, `no such game: ${req.params.gameId}`);
 
     if (game.isGameOver)
         return response(res, 400, `game ${req.params.gameId} is over`);
+
+    const user = await userRepo.findByUsername(CookieJar.from(req).email);
+    const encrypted = req.query.code;
+    const proposal = DrawProposal.decrypt(encrypted);
+
+    if (!proposal || !game.drawProposalCode || user!.email !== proposal.email || proposal.code !== game.drawProposalCode)
+        return response(res, 400, `invalid code`);
 
     game.draw();
     await gameRepo.save(game);
