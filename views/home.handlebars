@@ -10,23 +10,53 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </head>
 <body>
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Xi</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    game
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/game/list">list</a>
+                    <a class="dropdown-item" href="/game/new">new</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    user
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {{#if loggedIn}}
+                        <a class="dropdown-item" href="/user/rankings">rankings</a>
+                        <a class="dropdown-item" href="/user/reset">reset password</a>
+                        <a class="dropdown-item" href="/user/logout">logout</a>
+                    {{else}}
+                        <a class="dropdown-item" href="/user/login">login</a>
+                        <a class="dropdown-item" href="/user/register">register</a>
+                    {{/if}}
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
 <div class="container">
 
     <div class="col-sm-8">
         <div class="list-group">
 
-            <div id="logo">
-                <img src="/svg/{{logo}}.svg">
-            </div>
+            <img class="piece image" src="/svg/{{logo}}.svg">
 
-            {{#if loggedIn}}
-                <a href="/game/list" class="menu list-group-item list-group-item-action display-4">all games</a>
-                <a href="/game/new" class="menu list-group-item list-group-item-action display-4">new game</a>
-                <a href="/user/rankings" class="menu list-group-item list-group-item-action display-4">rankings</a>
-            {{else}}
-                <a href="/user/login" class="menu list-group-item list-group-item-action display-4">login</a>
-                <a href="/user/register" class="menu list-group-item list-group-item-action display-4">register</a>
-            {{/if}}
+            <blockquote class="blockquote">
+                <p class="mb-0">{{explanation}}</p>
+                <footer class="blockquote-footer"><a href="https://en.wikipedia.org/wiki/Xiangqi" target="_blank">en.wikipedia.org/wiki/Xiangqi</a></footer>
+            </blockquote>
 
         </div>
     </div>

@@ -15,6 +15,11 @@ const mailService = new MailService();
 const router: Router = Router();
 const create = getCustomRepository;
 
+router.get("/logout", (req: Request, res: Response) => {
+    res.clearCookie("xi");
+    res.redirect("/");
+});
+
 router.get("/login", (req: Request, res: Response) => {
     res.render("user/login");
 });
@@ -157,7 +162,7 @@ router.get("/rankings", async (req: Request, res: Response) => {
     const repo = create(UserRepository);
     const users = await repo.getAll();
 
-    res.render("user/rankings", { users: new UserRankingModel(users) });
+    res.render("user/rankings", { users: new UserRankingModel(users), loggedIn: req.cookies["xi"] !== undefined });
 });
 
 export const UserController: Router = router;
