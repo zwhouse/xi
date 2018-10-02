@@ -18,6 +18,7 @@ export class GameRepository {
             .createQueryBuilder("game")
             .leftJoinAndSelect("game.redPlayer", "red")
             .leftJoinAndSelect("game.blackPlayer", "black")
+            .leftJoinAndSelect("game.turnPlayer", "turn")
             .orderBy("game.created", desc ? "DESC" : "ASC")
             .getMany();
     }

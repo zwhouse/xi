@@ -53,6 +53,8 @@
                     <th scope="col">black</th>
                     <th scope="col"></th>
                     <th scope="col">finished</th>
+                    <th scope="col">move</th>
+                    <th scope="col">turn</th>
                     <th scope="col"></th>
                 </tr>
                 </thead>
@@ -63,6 +65,8 @@
                         <td>{{this.blackPlayer.name}}</td>
                         <td>{{#if this.isGameOver}}{{this.pointsBlack}}{{/if}}</td>
                         <td>{{#if this.isGameOver}}&#x2713;{{/if}}</td>
+                        <td>{{#unless this.isGameOver}}{{this.moveCount}}{{/unless}}</td>
+                        <td>{{#unless this.isGameOver}}{{this.turnPlayer.name}}{{/unless}}</td>
                         <td scope="col"><a href="/game/id/{{this.id}}">{{this.id}}</a></td>
                     </tr>
                 {{/each}}

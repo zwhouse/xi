@@ -53,6 +53,10 @@ export class Game {
         this.turnPlayer = initiatorWithRed ? initiator : opponent;
     }
 
+    moveCount(): number {
+        return Math.floor((JSON.parse(this.movesJson) as string[]).length / 2.0) + 1;
+    }
+
     draw() {
         this.endGame(undefined);
     }
