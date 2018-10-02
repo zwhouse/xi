@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# This script is executed on Heroku after a deploy.
+
 if [ -z "$DATABASE_URL" ]; then
     # On a local dev machine, or on Travis CI, the DATABASE_URL will not be set.
     echo "skipping 'typeorm migration:run'";

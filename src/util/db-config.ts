@@ -7,7 +7,12 @@ export class DbConfig {
     readonly database: string;
 
     constructor(dbUrl: string) {
+
         const parts = dbUrl.split(/[:\/@]+/);
+
+        if (parts[0] !== "postgres") {
+            throw new Error("Alas, as for now, only PostgreSQL is supported");
+        }
 
         if (parts.length === 6) {
             this.username = parts[1];
