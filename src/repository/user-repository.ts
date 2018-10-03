@@ -16,7 +16,7 @@ export class UserRepository {
     }
 
     async getAllBut(email: string): Promise<User[]> {
-        return (await this.manager.find(User)).filter(x => x.email !== email);
+        return (await this.manager.find(User)).filter(x => x.email !== email.toLowerCase());
     }
 
     getAll(desc: boolean = true): Promise<User[]> {
@@ -28,7 +28,7 @@ export class UserRepository {
     }
 
     findByUsername(email: string): Promise<User | undefined> {
-        return this.manager.findOne(User, { "email": email });
+        return this.manager.findOne(User, { "email": email.toLowerCase() });
     }
 
     correctPassword(user: User, enteredPassword: string): Promise<boolean> {
