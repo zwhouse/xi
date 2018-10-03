@@ -11,7 +11,7 @@ export class UserRepository {
 
     async createAndSave(name: string, email: string, password: string, confirmedEmail: boolean = false): Promise<User> {
         const hashedPassword = await this.hashedPassword(password);
-        const user = new User(name, email, hashedPassword, confirmedEmail);
+        const user = new User(name, email.toLowerCase(), hashedPassword, confirmedEmail);
         return this.manager.save(user);
     }
 
