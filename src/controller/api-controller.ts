@@ -29,7 +29,7 @@ router.get("/update-countdown-minutes", async (req: Request, res: Response) => {
         if (!game.isGameOver) {
             const remainingMinutes = game.updateCountdownMinutes(now);
 
-            if (remainingMinutes === 59) {
+            if (remainingMinutes >= 50 && remainingMinutes < 60) {
                 const user = game.turnPlayer!;
                 await mailService.send(user.email!, "Xi - Your time is almost up!", warnUser(req, user, game));
             }
