@@ -42,18 +42,8 @@ createConnection({
     entities: [User, Game],
     synchronize: true,
     logging: false
-}).then(async () => {
+}).then(() => {
     console.log("Database connection established");
-
-    /// TEMP
-    const gameRepo = getCustomRepository(GameRepository);
-    for (const game of await gameRepo.getAll()) {
-        game.moveDatesJson = '[]';
-        game.countdownMinutes = 5760;
-        game.minutesPerMove = 5760;
-        await gameRepo.save(game);
-    }
-    /// TEMP
 
     const port: number = parseInt(process.env.PORT as string);
 
