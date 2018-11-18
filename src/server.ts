@@ -7,12 +7,13 @@ import "reflect-metadata";
 import {UserController} from "./controller/user-controller";
 import {GameController} from "./controller/game-controller";
 import bodyParser = require("body-parser");
-import {createConnection} from "typeorm";
+import {createConnection, getCustomRepository} from "typeorm";
 import {User} from "./db/user";
 import {Game} from "./db/game";
 import {DbConfig} from "./util/db-config";
 import {HomeController} from "./controller/home-controller";
 import {ApiController} from "./controller/api-controller";
+import {GameRepository} from "./repository/game-repository";
 
 const app: express.Application = express();
 const hbs: Exphbs = handlebars.create({});
@@ -41,8 +42,18 @@ createConnection({
     entities: [User, Game],
     synchronize: true,
     logging: false
-}).then(() => {
+}).then(async () => {
     console.log("Database connection established");
+
+    /// TEMP
+    const gameRepo = getCustomRepository(GameRepository);
+    for (const game of await gameRepo.getAll()) {
+        game.moveDatesJson = '[]';
+        game.countdownMinutes = 5760;
+        game.minutesPerMove = 5760;
+        await gameRepo.save(game);
+    }
+    /// TEMP
 
     const port: number = parseInt(process.env.PORT as string);
 
