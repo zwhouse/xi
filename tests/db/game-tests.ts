@@ -345,6 +345,21 @@ describe("Game", () => {
             expect(game.movesJson).to.equal("[\"炮 (32)-35\",\"馬 (18)-37\"]");
         });
 
+        it("should add timestamp to moveDatesJson", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            red.id = 1;
+            black.id = 2;
+
+            const game = new Game(red, black);
+            expect(game.moveDatesJson).to.equal("[]");
+            game.move("炮 (32)-35");
+            expect(game.moveDatesJson).to.match(/^\[\d{13}]$/);
+            game.move("馬 (18)-37");
+            expect(game.moveDatesJson).to.match(/^\[\d{13},\d{13}]$/);
+        });
+
         it("should change turnPlayer", () => {
             const red = new User("R", "r@mail.com", "...", true, 1200);
             const black = new User("B", "b@mail.com", "...", true, 1200);
@@ -358,6 +373,253 @@ describe("Game", () => {
             expect(game.turnPlayer).to.equal(black);
             game.move("馬 (18)-37");
             expect(game.turnPlayer).to.equal(red);
+        });
+
+        it("should reset countdownMinutes", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            const game = new Game(red, black, true, 42);
+            expect(game.countdownMinutes).to.equal(42);
+            game.minutesPerMove = 100;
+            game.move("炮 (32)-35");
+            expect(game.countdownMinutes).to.equal(100);
+        });
+    });
+
+    describe("#moveCount", () => {
+
+        it("should return 1 for a new game", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            const game = new Game(red, black);
+            expect(game.moveCount()).to.equal(1);
+        });
+
+        it("should return 1 after red moves", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            const game = new Game(red, black);
+
+            game.move("炮 (32)-35");
+
+            expect(game.moveCount()).to.equal(1);
+        });
+
+        it("should return 2 after red and black moves", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            const game = new Game(red, black);
+
+            game.move("炮 (32)-35");
+            game.move("馬 (18)-37");
+
+            expect(game.moveCount()).to.equal(2);
+        });
+    });
+
+    describe("#updateCountdownMinutes", () => {
+
+        it("should use created-time when no move has been made", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            const game = new Game(red, black, true, 10);
+
+            expect(game.countdownMinutes).to.equal(10);
+
+            game.created = new Date(2000, 1, 1, 12, 0);
+            const now =  new Date(2000, 1, 1, 12, 6).getTime();
+
+            const remaining = game.updateCountdownMinutes(now);
+
+            expect(remaining).to.equal(4);
+            expect(game.countdownMinutes).to.equal(4);
+        });
+
+        it("should use last move timestamp", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            const game = new Game(red, black, true, 10);
+
+            expect(game.countdownMinutes).to.equal(10);
+
+            const moveTimestamps = [
+                new Date(2000, 1, 1, 12, 5).getTime(),
+                new Date(2000, 1, 1, 12, 10).getTime(),
+                new Date(2000, 1, 1, 12, 15).getTime()
+            ];
+
+            game.moveDatesJson = JSON.stringify(moveTimestamps);
+
+            const now =  new Date(2000, 1, 1, 12, 20).getTime();
+
+            const remaining = game.updateCountdownMinutes(now);
+
+            expect(remaining).to.equal(5);
+            expect(game.countdownMinutes).to.equal(5);
+        });
+
+        it("should return 0 when exceeding time", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            const game = new Game(red, black, true, 10);
+
+            expect(game.countdownMinutes).to.equal(10);
+
+            const moveTimestamps = [
+                new Date(2000, 1, 1, 12, 5).getTime(),
+                new Date(2000, 1, 1, 12, 10).getTime(),
+                new Date(2000, 1, 1, 12, 15).getTime()
+            ];
+
+            game.moveDatesJson = JSON.stringify(moveTimestamps);
+
+            const now =  new Date(2000, 1, 1, 12, 25).getTime();
+
+            const remaining = game.updateCountdownMinutes(now);
+
+            expect(remaining).to.equal(0);
+            expect(game.countdownMinutes).to.equal(0);
+        });
+
+        it("should return 0 when exceeding time by a lot", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            const game = new Game(red, black, true, 10);
+
+            expect(game.countdownMinutes).to.equal(10);
+
+            const moveTimestamps = [
+                new Date(2000, 1, 1, 12, 5).getTime(),
+                new Date(2000, 1, 1, 12, 10).getTime(),
+                new Date(2000, 1, 1, 12, 15).getTime()
+            ];
+
+            game.moveDatesJson = JSON.stringify(moveTimestamps);
+
+            const now =  new Date(2000, 1, 1, 12, 45).getTime();
+
+            const remaining = game.updateCountdownMinutes(now);
+
+            expect(remaining).to.equal(0);
+            expect(game.countdownMinutes).to.equal(0);
+        });
+
+        it("should end game when exceeding time", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            red.id = 1;
+            black.id = 2;
+
+            const game = new Game(red, black, true, 10);
+
+            expect(game.countdownMinutes).to.equal(10);
+
+            const moveTimestamps = [
+                new Date(2000, 1, 1, 12, 5).getTime(),
+                new Date(2000, 1, 1, 12, 10).getTime(),
+                new Date(2000, 1, 1, 12, 15).getTime()
+            ];
+
+            game.moveDatesJson = JSON.stringify(moveTimestamps);
+
+            const now =  new Date(2000, 1, 1, 12, 25).getTime();
+
+            expect(game.isGameOver).to.equal(false);
+
+            game.updateCountdownMinutes(now);
+
+            expect(game.isGameOver).to.equal(true);
+        });
+
+        it("should make red winner when black exceeds time", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            red.id = 1;
+            black.id = 2;
+
+            const game = new Game(red, black, true, 10);
+
+            expect(game.countdownMinutes).to.equal(10);
+
+            // Red makes a move
+            game.move("炮 (32)-35");
+
+            // Change the time of the move
+            game.moveDatesJson = JSON.stringify([new Date(2000, 1, 1, 12, 0).getTime()]);
+
+            // Let the time be 11 minutes after the last move
+            const now =  new Date(2000, 1, 1, 12, 11).getTime();
+
+            expect(game.winner).to.equal(undefined);
+
+            game.updateCountdownMinutes(now);
+
+            expect(game.winner).to.equal(red);
+        });
+    });
+
+    describe("#timeRemaining", () => {
+
+        it("should return plural when unit is more than 1", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            const days = 2 * 24 * 60;
+            const hours = 2 * 60;
+            const minutes = 2;
+
+            const game = new Game(red, black, true, days + hours + minutes);
+
+            expect(game.timeRemaining()).to.equal("2 days, 2 hours and 2 minutes");
+        });
+
+        it("should return singular when unit is 1", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            const days = 24 * 60;
+            const hours = 60;
+            const minutes = 1;
+
+            const game = new Game(red, black, true, days + hours + minutes);
+
+            expect(game.timeRemaining()).to.equal("1 day, 1 hour and 1 minute");
+        });
+
+        it("should return two parts when one unit is 0", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            const days = 7 * 24 * 60;
+            const hours = 60;
+            const minutes = 0;
+
+            const game = new Game(red, black, true, days + hours + minutes);
+
+            expect(game.timeRemaining()).to.equal("7 days and 1 hour");
+        });
+
+        it("should return one part when two units are 0", () => {
+            const red = new User("R", "r@mail.com", "...", true, 1200);
+            const black = new User("B", "b@mail.com", "...", true, 1200);
+
+            const days = 0;
+            const hours = 3 * 60;
+            const minutes = 0;
+
+            const game = new Game(red, black, true, days + hours + minutes);
+
+            expect(game.timeRemaining()).to.equal("3 hours");
         });
     });
 });

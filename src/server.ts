@@ -15,7 +15,7 @@ import {HomeController} from "./controller/home-controller";
 import {ApiController} from "./controller/api-controller";
 
 const app: express.Application = express();
-const hbs: Exphbs = handlebars.create({ /* config */ });
+const hbs: Exphbs = handlebars.create({});
 
 dotenv.config();
 app.engine('handlebars', hbs.engine);

@@ -156,7 +156,7 @@ router.get("/id/:gameId", async (req: Request, res: Response) => {
     const gameRepo = create(GameRepository);
     const user = await userRepo.findByUsername(CookieJar.from(req).email);
     const game = await gameRepo.getById(parseInt(req.params.gameId));
-    res.render("game/id", { game: game, user: user, reversed: game!.blackPlayer!.id === user!.id });
+    res.render("game/id", { game: game, user: user, reversed: game!.blackPlayer!.id === user!.id, timeRemaining: game!.timeRemaining() });
 });
 
 router.get("/list", async (req: Request, res: Response) => {
@@ -177,6 +177,7 @@ router.post("/new", async (req: Request, res: Response) => {
     const gameRepo = create(GameRepository);
     const cookieJar = CookieJar.from(req);
     const opponentEmail = req.body.opponent;
+    const daysThinkingTime = req.body.daysThinkingTime;
     const initiator = await userRepo.findByUsername(cookieJar.email);
     const opponent = await userRepo.findByUsername(opponentEmail);
 
@@ -186,7 +187,7 @@ router.post("/new", async (req: Request, res: Response) => {
         return;
     }
 
-    const game = await gameRepo.createAndSave(initiator!, opponent!, req.body.color === "red");
+    const game = await gameRepo.createAndSave(initiator!, opponent!, req.body.color === "red", daysThinkingTime);
 
     mailService.send(opponent.email!, `A new Xiangqi challenge!`, inviteUser(req, initiator!, game));
 
