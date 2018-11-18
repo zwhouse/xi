@@ -39,5 +39,12 @@ export function inviteUser(req: Request, inviter: User, game: Game): string {
     const protocol = process.env.DEVELOPMENT === "true" ? "http" : "https";
     const gameLink = `${protocol}://${req.get("host")}/game/id/${game.id}`;
 
-    return `<p>Hi, ${inviter.name} invited you to play a game Xiangqi: <a href="${gameLink}">game ${game.id}</a>.</p>`;
+    return `<p>Hi, ${inviter.name} invited you to play a game Xiangqi with ${(game.minutesPerMove / (24 * 60))} days thinking time for each move: <a href="${gameLink}">game ${game.id}</a>.</p>`;
+}
+
+export function warnUser(req: Request, user: User, game: Game): string {
+    const protocol = process.env.DEVELOPMENT === "true" ? "http" : "https";
+    const gameLink = `${protocol}://${req.get("host")}/game/id/${game.id}`;
+
+    return `<p>${user.name}, you have less than 1 hour to make a move in <a href="${gameLink}">game ${game.id}</a>.</p>`;
 }
