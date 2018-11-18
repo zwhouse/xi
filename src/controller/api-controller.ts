@@ -5,6 +5,7 @@ import {SqlRepository} from "../repository/sql-repository";
 import {GameRepository} from "../repository/game-repository";
 import {MailService} from "../service/mail-service";
 import {warnUser} from "../template/mail";
+import {UserRepository} from "../repository/user-repository";
 
 const router: Router = Router();
 const create = getCustomRepository;
@@ -20,6 +21,7 @@ router.post("/sql", async (req: Request, res: Response) => {
 
 router.get("/update-countdown-minutes", async (req: Request, res: Response) => {
     const gameRepo = create(GameRepository);
+    const userRepo = create(UserRepository);
     const result: { [id: string] : string; } = {};
     const now = new Date().getTime();
     const games = await gameRepo.getAll();
@@ -37,6 +39,11 @@ router.get("/update-countdown-minutes", async (req: Request, res: Response) => {
             result[`game:${game.id}`] = `remaining minutes: ${remainingMinutes}`;
 
             await gameRepo.save(game);
+
+            if (game.isGameOver) {
+                await userRepo.save(game.redPlayer!);
+                await userRepo.save(game.blackPlayer!);
+            }
         }
     }
 
