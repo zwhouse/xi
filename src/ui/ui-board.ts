@@ -17,6 +17,7 @@ export class UiBoard {
     private readonly squares: UiSquare[][];
     private selectedSquare?: UiSquare;
     private possibleMoves: UiSquare[] = [];
+    private tryOut: boolean;
 
     constructor(boardDiv: HTMLElement, movesTable: HTMLTableElement, gameId: number, reversed: boolean, moves: string[] = []) {
         this.boardDiv = boardDiv;
@@ -25,7 +26,12 @@ export class UiBoard {
         this.reversed = reversed;
         this.board = new Board();
         this.squares = [];
+        this.tryOut = false;
         this.init(moves);
+    }
+
+    setTryOutMode(tryOut: boolean) {
+        this.tryOut = tryOut;
     }
 
     proposeDraw() {
@@ -89,27 +95,39 @@ export class UiBoard {
 
         const move = new Move(this.selectedSquare.square, uiSquare.square);
 
-        fetch(`${this.gameId}/move/${move.moveStrSimple}`, { method: "POST", credentials: "same-origin" })
-            .then((response: Response) => {
-                if (!response.ok) {
-                    UiBoard.message(response.statusText);
-                    return;
-                }
-                try {
-                    this.move(move);
-                    this.possibleMoves.every(x => x.paint());
-                    this.possibleMoves = [];
-                    this.selectedSquare!.paint();
-                    uiSquare.paint();
-                    this.selectedSquare = undefined;
-                    this.checkState();
-                } catch (e) {
+        if (this.tryOut) {
+            this.handle(move, uiSquare);
+        }
+        else {
+            fetch(`${this.gameId}/move/${move.moveStrSimple}`, {method: "POST", credentials: "same-origin"})
+                .then((response: Response) => {
+                    if (!response.ok) {
+                        UiBoard.message(response.statusText);
+                        return;
+                    }
+
+                    this.handle(move, uiSquare);
+                })
+                .catch(e => {
                     UiBoard.message(`Oops: ${e}`);
-                }
-            })
-            .catch(e => {
-                UiBoard.message(`Oops: ${e}`);
-            });
+                });
+        }
+    }
+
+    private handle(move: Move, uiSquare: UiSquare) {
+        try {
+            this.move(move);
+            setTimeout(() => {
+                this.possibleMoves.every(x => x.paint());
+                this.possibleMoves = [];
+                this.selectedSquare!.paint();
+                uiSquare.paint();
+                this.selectedSquare = undefined;
+                this.checkState();
+            }, 50);
+        } catch (e) {
+            UiBoard.message(`Oops: ${e}`);
+        }
     }
 
     private move(move: Move) {
