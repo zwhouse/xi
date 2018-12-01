@@ -17,7 +17,8 @@ export class UiBoard {
     private readonly squares: UiSquare[][];
     private selectedSquare?: UiSquare;
     private possibleMoves: UiSquare[] = [];
-    private tryOut: boolean;
+    private firstMove?: Move;
+    private firstSquare?: UiSquare;
 
     constructor(boardDiv: HTMLElement, movesTable: HTMLTableElement, gameId: number, reversed: boolean, moves: string[] = []) {
         this.boardDiv = boardDiv;
@@ -26,12 +27,25 @@ export class UiBoard {
         this.reversed = reversed;
         this.board = new Board();
         this.squares = [];
-        this.tryOut = false;
         this.init(moves);
     }
 
-    setTryOutMode(tryOut: boolean) {
-        this.tryOut = tryOut;
+    async submitMove(): Promise<boolean> {
+
+        if (this.firstMove === undefined) {
+            return false;
+        }
+
+        const response = await fetch(`${this.gameId}/move/${this.firstMove!.moveStrSimple}`, {method: "POST", credentials: "same-origin"});
+
+        if (response.ok) {
+            this.handle(this.firstMove!, this.firstSquare!);
+        }
+        else {
+            UiBoard.message(response.statusText);
+        }
+
+        return response.ok;
     }
 
     proposeDraw() {
@@ -95,26 +109,16 @@ export class UiBoard {
 
         const move = new Move(this.selectedSquare.square, uiSquare.square);
 
-        if (this.tryOut) {
-            this.handle(move, uiSquare);
-        }
-        else {
-            fetch(`${this.gameId}/move/${move.moveStrSimple}`, {method: "POST", credentials: "same-origin"})
-                .then((response: Response) => {
-                    if (!response.ok) {
-                        UiBoard.message(response.statusText);
-                        return;
-                    }
-
-                    this.handle(move, uiSquare);
-                })
-                .catch(e => {
-                    UiBoard.message(`Oops: ${e}`);
-                });
-        }
+        this.handle(move, uiSquare);
     }
 
     private handle(move: Move, uiSquare: UiSquare) {
+
+        if (this.firstMove === undefined) {
+            this.firstMove = move;
+            this.firstSquare = uiSquare;
+        }
+
         try {
             this.move(move);
             setTimeout(() => {
