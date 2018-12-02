@@ -17,7 +17,7 @@ export class UiBoard {
     private readonly squares: UiSquare[][];
     private selectedSquare?: UiSquare;
     private possibleMoves: UiSquare[] = [];
-    public movesMade: number = 0;
+    private movesMade: number = 0;
     private firstMove?: Move;
     private firstSquare?: UiSquare;
 
@@ -31,14 +31,16 @@ export class UiBoard {
         this.init(moves);
     }
 
+    getSubmitMoveTitle(): string {
+        return !!this.firstMove ? `Submit move ${this.firstMove.moveStr}?`: "No move made yet";
+    }
+
     async submitMove(): Promise<boolean> {
 
         if (this.movesMade === 0) {
             UiBoard.message("no move made yet");
             return false;
         }
-
-        let needsReload = this.movesMade > 1;
 
         while (this.movesMade > 0) {
             // Undo all the moves the player made, and make the first move for real by POST-ing it to the backend
@@ -58,7 +60,7 @@ export class UiBoard {
             return false;
         }
 
-        return needsReload;
+        return true;
     }
 
     proposeDraw() {

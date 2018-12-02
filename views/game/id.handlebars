@@ -69,7 +69,7 @@
 
     $('#submitMoveButton').confirmation({
         rootSelector: '[data-toggle=confirmation]',
-        title: "Submit the first move?",
+        title: function () { return board.getSubmitMoveTitle() },
         popout: true,
         onConfirm: async function() {
             let needsReload = await board.submitMove();
