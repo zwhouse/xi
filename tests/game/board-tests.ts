@@ -3,6 +3,7 @@ import 'mocha';
 import {Board} from "../../src/game/board";
 import {Move} from "../../src/game/move";
 import {Color} from "../../src/game/color";
+import {No} from "../../src/game/piece";
 
 describe("Board", () => {
 
@@ -497,6 +498,94 @@ describe("Board", () => {
             );
 
             expect(board.isCheckmate(Color.Black)).to.equal(true);
+        });
+    });
+
+    describe("#popMove", () => {
+
+        it("should throw an error when no moves are made", () => {
+            expect(() => { new Board().popMove() }).to.throw(Error);
+        });
+
+        it("should remove the last move", () => {
+
+            const board = new Board();
+
+            board.makeMove(Move.create("兵 (45)-55", board));
+
+            expect(board.moves.length).to.equal(1);
+
+            const move = board.popMove();
+
+            expect(board.moves.length).to.equal(0);
+            expect(move.fromRank).to.equal(4);
+            expect(move.fromFile).to.equal(5);
+            expect(move.toRank).to.equal(5);
+            expect(move.toFile).to.equal(5);
+        });
+
+        it("should not occupy the previous square", () => {
+
+            const board = new Board(
+                `. . . . g . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . S . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . G . . . .`
+            );
+
+            expect(board.getSquare(4, 4).getPiece()).to.equal(No.piece);
+            expect(board.getSquare(4, 5).getPiece().charWestern).to.equal('S');
+
+            // Move one step ahead
+            board.makeMove(Move.create("兵 (55)-65", board));
+
+            expect(board.getSquare(4, 4).getPiece().charWestern).to.equal('S');
+            expect(board.getSquare(4, 5).getPiece()).to.equal(No.piece);
+
+            board.popMove();
+
+            expect(board.getSquare(4, 4).getPiece()).to.equal(No.piece);
+            expect(board.getSquare(4, 5).getPiece().charWestern).to.equal('S');
+        });
+
+        it("should return a captures piece", () => {
+
+            const board = new Board(
+                `. . . . g . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . s . . . .
+                       . . . . S . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . G . . . .`
+            );
+
+            expect(board.getCapturedPieces(Color.Black).length).to.equal(0);
+            expect(board.getCapturedPieces(Color.Red).length).to.equal(0);
+
+            // Capture the black soldier
+            board.makeMove(Move.create("兵 (55)-65", board));
+
+            expect(board.getCapturedPieces(Color.Black).length).to.equal(1);
+            expect(board.getCapturedPieces(Color.Red).length).to.equal(0);
+            expect(board.getSquare(4, 4).getPiece().charWestern).to.equal('S');
+            expect(board.getSquare(4, 5).getPiece()).to.equal(No.piece);
+
+            board.popMove();
+
+            expect(board.getCapturedPieces(Color.Black).length).to.equal(0);
+            expect(board.getCapturedPieces(Color.Red).length).to.equal(0);
+            expect(board.getSquare(4, 4).getPiece().charWestern).to.equal('s');
+            expect(board.getSquare(4, 5).getPiece().charWestern).to.equal('S');
         });
     });
 });

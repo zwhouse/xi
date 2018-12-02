@@ -17,6 +17,7 @@ export class UiBoard {
     private readonly squares: UiSquare[][];
     private selectedSquare?: UiSquare;
     private possibleMoves: UiSquare[] = [];
+    public movesMade: number = 0;
     private firstMove?: Move;
     private firstSquare?: UiSquare;
 
@@ -32,9 +33,20 @@ export class UiBoard {
 
     async submitMove(): Promise<boolean> {
 
-        if (this.firstMove === undefined) {
+        if (this.movesMade === 0) {
+            UiBoard.message("no move made yet");
             return false;
         }
+
+        let needsReload = this.movesMade > 1;
+
+        while (this.movesMade > 0) {
+            // Undo all the moves the player made, and make the first move for real by POST-ing it to the backend
+            this.board.popMove();
+            this.movesMade--;
+        }
+
+        this.selectedSquare = this.firstSquare;
 
         const response = await fetch(`${this.gameId}/move/${this.firstMove!.moveStrSimple}`, {method: "POST", credentials: "same-origin"});
 
@@ -43,9 +55,10 @@ export class UiBoard {
         }
         else {
             UiBoard.message(response.statusText);
+            return false;
         }
 
-        return response.ok;
+        return needsReload;
     }
 
     proposeDraw() {
@@ -113,6 +126,8 @@ export class UiBoard {
     }
 
     private handle(move: Move, uiSquare: UiSquare) {
+
+        this.movesMade++;
 
         if (this.firstMove === undefined) {
             this.firstMove = move;
@@ -264,9 +279,6 @@ export class UiBoard {
         const moveCell = row.insertCell();
         moveCell.className = `move ${turn}-move`;
         this.insert(moveCell, document.createTextNode(move.moveStr));
-
-        //const moveIndex = this.board.getMoveCount();
-        //moveCell.addEventListener("click", () => this.showMove(moveIndex), false);
 
         if (move.captured !== No.piece) {
             const img = document.createElement('img');
