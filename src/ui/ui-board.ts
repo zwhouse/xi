@@ -17,7 +17,9 @@ export class UiBoard {
     private readonly squares: UiSquare[][];
     private selectedSquare?: UiSquare;
     private possibleMoves: UiSquare[] = [];
-    private tryOut: boolean;
+    private movesMade: number = 0;
+    private firstMove?: Move;
+    private firstSquare?: UiSquare;
 
     constructor(boardDiv: HTMLElement, movesTable: HTMLTableElement, gameId: number, reversed: boolean, moves: string[] = []) {
         this.boardDiv = boardDiv;
@@ -26,12 +28,39 @@ export class UiBoard {
         this.reversed = reversed;
         this.board = new Board();
         this.squares = [];
-        this.tryOut = false;
         this.init(moves);
     }
 
-    setTryOutMode(tryOut: boolean) {
-        this.tryOut = tryOut;
+    getSubmitMoveTitle(): string {
+        return !!this.firstMove ? `Submit move ${this.firstMove.moveStr}?`: "No move made yet";
+    }
+
+    async submitMove(): Promise<boolean> {
+
+        if (this.movesMade === 0) {
+            UiBoard.message("no move made yet");
+            return false;
+        }
+
+        while (this.movesMade > 0) {
+            // Undo all the moves the player made, and make the first move for real by POST-ing it to the backend
+            this.board.popMove();
+            this.movesMade--;
+        }
+
+        this.selectedSquare = this.firstSquare;
+
+        const response = await fetch(`${this.gameId}/move/${this.firstMove!.moveStrSimple}`, {method: "POST", credentials: "same-origin"});
+
+        if (response.ok) {
+            this.handle(this.firstMove!, this.firstSquare!);
+        }
+        else {
+            UiBoard.message(response.statusText);
+            return false;
+        }
+
+        return true;
     }
 
     proposeDraw() {
@@ -95,26 +124,18 @@ export class UiBoard {
 
         const move = new Move(this.selectedSquare.square, uiSquare.square);
 
-        if (this.tryOut) {
-            this.handle(move, uiSquare);
-        }
-        else {
-            fetch(`${this.gameId}/move/${move.moveStrSimple}`, {method: "POST", credentials: "same-origin"})
-                .then((response: Response) => {
-                    if (!response.ok) {
-                        UiBoard.message(response.statusText);
-                        return;
-                    }
-
-                    this.handle(move, uiSquare);
-                })
-                .catch(e => {
-                    UiBoard.message(`Oops: ${e}`);
-                });
-        }
+        this.handle(move, uiSquare);
     }
 
     private handle(move: Move, uiSquare: UiSquare) {
+
+        this.movesMade++;
+
+        if (this.firstMove === undefined) {
+            this.firstMove = move;
+            this.firstSquare = uiSquare;
+        }
+
         try {
             this.move(move);
             setTimeout(() => {
@@ -260,9 +281,6 @@ export class UiBoard {
         const moveCell = row.insertCell();
         moveCell.className = `move ${turn}-move`;
         this.insert(moveCell, document.createTextNode(move.moveStr));
-
-        //const moveIndex = this.board.getMoveCount();
-        //moveCell.addEventListener("click", () => this.showMove(moveIndex), false);
 
         if (move.captured !== No.piece) {
             const img = document.createElement('img');

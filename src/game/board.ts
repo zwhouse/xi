@@ -78,6 +78,24 @@ export class Board {
         this.moves.push(move);
     }
 
+    popMove(): Move {
+
+        if (this.moves.length === 0) {
+            throw new Error("no moves made yet");
+        }
+
+        const lastMove = this.moves.pop()!;
+
+        lastMove.from.setPiece(lastMove.to.getPiece());
+        lastMove.to.setPiece(lastMove.captured);
+
+        if (lastMove.captured !== No.piece) {
+            this.capturedPieces[`${lastMove.captured.color}`].pop();
+        }
+
+        return lastMove;
+    }
+
     isCheckmate(color: Color): boolean {
 
         const occupiedSquares = this.findOccupiedSquares(color);

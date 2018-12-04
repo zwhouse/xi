@@ -51,12 +51,9 @@
             {{#if game.isGameOver}}
                 <p class="small">Game over: {{#if game.winner}}{{game.winner.name}} won{{else}}draw{{/if}} (red: {{game.pointsRed}}, black: {{game.pointsBlack}})</p>
             {{else}}
+                <button id="submitMoveButton" type="button" class="btn btn-outline-primary btn-sm" data-toggle="confirmation" data-singleton="true">move</button>
                 <button id="drawButton" type="button" class="btn btn-outline-warning btn-sm" data-toggle="confirmation" data-singleton="true">draw</button>
                 <button id="forfeitButton" type="button" class="btn btn-outline-danger btn-sm" data-toggle="confirmation" data-singleton="true">forfeit</button>
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="try-out">
-                    <small><label class="form-check-label" for="exampleCheck1">try-out</label></small>
-                </div>
                 <p><small>remaining time for {{game.turnPlayer.name}}'s move: {{timeRemaining}}</small></p>
             {{/if}}
         </div>
@@ -69,6 +66,18 @@
 <script>
 
     const board = xi.load("board", "movesTable", "{{game.redPlayer.name}}", "{{game.blackPlayer.name}}", {{game.id}}, {{reversed}}, {{{game.movesJson}}});
+
+    $('#submitMoveButton').confirmation({
+        rootSelector: '[data-toggle=confirmation]',
+        title: function () { return board.getSubmitMoveTitle() },
+        popout: true,
+        onConfirm: async function() {
+            let needsReload = await board.submitMove();
+            if (needsReload) {
+                location.reload();
+            }
+        }
+    });
 
     $('#drawButton').confirmation({
         rootSelector: '[data-toggle=confirmation]',
@@ -84,15 +93,6 @@
         onConfirm: function() { board.forfeitGame() }
     });
 
-    $("#try-out").click(() => {
-        if (!!$('#try-out').is(":checked")) {
-            board.setTryOutMode(true);
-        }
-        else {
-            // Force the page to reload since the player could have made one or more try-out moves
-            location.reload();
-        }
-    });
 </script>
 </body>
 </html>
