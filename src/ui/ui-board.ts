@@ -139,10 +139,10 @@ export class UiBoard {
 
     private checkState() {
         if (this.board.isCheckmate(this.board.getTurn())) {
-            UiBoard.message(`${this.board.getTurn()} is checkmate, ${Color.opposite(this.board.getTurn())} wins`);
+            UiBoard.message(`${this.board.getTurn()} is checkmated, ${Color.opposite(this.board.getTurn())} wins`);
         }
         else if (this.board.isCheck(this.board.getTurn())) {
-            UiBoard.message(`${this.board.getTurn()} is check`);
+            UiBoard.message(`${this.board.getTurn()} is in check`);
         }
     }
 
