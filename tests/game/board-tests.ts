@@ -499,6 +499,26 @@ describe("Board", () => {
 
             expect(board.isCheckmate(Color.Black)).to.equal(true);
         });
+
+        it("should return true if black is stalemate while passed soldier", () => {
+
+            const board = new Board(
+                `. . . . . . . . .
+                       . . . . S . . . .
+                       . . . g . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . . . . . .
+                       . . . . G . . . .`
+            );
+
+            board.makeMove(new Move(board.getSquare(4, 9), board.getSquare(4, 8)));
+
+            expect(board.isCheckmate(Color.Black)).to.equal(true);
+        });
     });
 
     describe("#popMove", () => {
